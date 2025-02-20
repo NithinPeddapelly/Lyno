@@ -18,14 +18,39 @@
 
 <h2>Technologies Used</h2>
 <ul>
-    <li><strong>WebRTC</strong> – For real-time video and audio communication.</li>
+    <li><strong>MongoDB</strong> – Database for storing user and session data.</li>
+    <li><strong>Backend:</strong>
+        <ul>
+            <li><strong>Bcrypt</strong> – Hashing passwords securely.</li>
+            <li><strong>Crypto</strong> – Built-in Node.js module for cryptographic operations.</li>
+            <li><strong>Socket.io</strong> – Enables real-time, bi-directional communication.</li>
+            <li><strong>ExpressJS</strong> – Web framework for building APIs.</li>
+            <li><strong>Mongoose</strong> – ODM (Object Data Modeling) for MongoDB.</li>
+            <li><strong>HTTP-Status-Codes</strong> – Standardized HTTP status code handling.</li>
+        </ul>
+    </li>
+    <li><strong>Frontend:</strong>
+        <ul>
+            <li><strong>Material UI</strong> – UI framework for styling.</li>
+            <li><strong>WebRTC</strong> – Real-time video and audio communication.</li>
+            <li><strong>ReactJS</strong> – Frontend framework.</li>
+            <li><strong>Axios</strong> – For making HTTP requests.</li>
+            <li><strong>CSS</strong> – Styling.</li>
+            <li><strong>Socket.io Client</strong> – Required to connect to a Socket.io server.</li>
+        </ul>
+    </li>
+    <li><strong>Additional Packages:</strong>
+        <ul>
+            <li><strong>Nodemon</strong> – Automatically restarts server on file changes (for development).</li>
+        </ul>
+    </li>
 </ul>
 
 <h2>Installation</h2>
 <p>To run Lyno locally, follow these steps:</p>
 <pre>
-git clone https://github.com/yourusername/lyno.git
-cd lyno
+git clone https://github.com/NithinPeddapelly/Lyno.git
+cd Lyno
 npm install  # or yarn install
 npm start    # or yarn start
 </pre>
