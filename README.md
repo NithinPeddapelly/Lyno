@@ -1,4 +1,4 @@
-<h1>Lyno 🚀</h1>
+<h1>Lyno</h1>
 
 <h2>Introduction</h2>
 <p>Lyno is a fast, seamless, and secure video communication platform designed for real-time collaboration. Powered by <strong>Socket.IO</strong> and <strong>WebRTC</strong>, it enables high-quality, low-latency video and audio calls with a scalable backend. Whether for remote work, online learning, or casual conversations, Lyno provides a smooth and private communication experience.</p>
@@ -59,6 +59,7 @@ npm start    # or yarn start
 <h2>Usage</h2>
 <ul>
     <li>Open Lyno in your browser.</li>
+    <li>Register an account or log in with your credentials.</li>
     <li>Share the unique meeting link with others.</li>
     <li>Start a seamless video call!</li>
 </ul>
