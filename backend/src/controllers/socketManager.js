@@ -1,3 +1,4 @@
+import { connection } from "mongoose"
 import { Server } from "socket.io"
 
 let connections = {}
@@ -5,7 +6,7 @@ let messagea = {}
 let timeOnline = {}
 
 export const connectToSocket = (server)=>{
-    const io = new Server;    //this server is node http server
+    const io = new Server(server);    //this server is node http server
 
     io.on("connection", (socket) => {
         socket.on("join-call",(path)=> {
@@ -47,12 +48,39 @@ export const connectToSocket = (server)=>{
                     messagea[matchingRoom] = []
                 }
                 messagea[matchingRoom].push({"sender": sender,"data": data,"socket-id-sender":socket.id})
+                console.log("message", KeyboardEvent,":",sender,data)
+
+                connection[matchingRoom].forEach((elem) =>{
+                    io.to(elem).emit("chat-message",data,sender,socket.id)  // to know who is online or who is sending message
+                })
             }
 
         })
 
         socket.on("disconnect",()=>{
+            var diffTime = Math.abs(timeOnline[socket.id] - new Date())
 
+            var Key
+
+            for(const [k,v] of JSON.parse(JSON.stringify(Object.entries(connections)))){
+
+                for (let a = 0; a < v.length; ++a) {
+                    if(v[a] === socket.id){
+                        Key = k
+
+                        for(let a = 0; a < connections[Key].length; ++a){
+                            io.to(connections[Key][a]).emit("user-left",socket.id)
+                        }
+                        var index = connections[Key].indexOf(socket.id)
+
+                        connections[Key].splice(index, 1)
+
+                        if(connections[Key].length === 0){
+                            delete connections[Key]
+                        }
+                    }
+            }
+        }
         })
     })
  
