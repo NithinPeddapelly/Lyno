@@ -1,12 +1,20 @@
-import { connection } from "mongoose"
+import mongoose from "mongoose";
+const { connection } = mongoose;
 import { Server } from "socket.io"
 
 let connections = {}
 let messagea = {}
 let timeOnline = {}
 
-export const connectToSocket = (server)=>{
-    const io = new Server(server);    //this server is node http server
+export const connectToSocket = (server)=>{    //this server is node http server
+    const io = new Server(server ,{     
+        cors:{
+            origin:"*",
+            methods:["GET","POST"],
+            allowedHeaders:["*"],
+            credentials:true
+        }
+    });  
 
     io.on("connection", (socket) => {
         socket.on("join-call",(path)=> {
