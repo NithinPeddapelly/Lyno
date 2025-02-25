@@ -31,4 +31,11 @@ const start = async () => {
   });
 };
 
+//Testing
+
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Backend is connected!" });
+});
+
+
 start(); // Initializing the server and database connection
