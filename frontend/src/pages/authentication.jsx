@@ -37,7 +37,7 @@ export default function Authentication() {
   const[messages, setMessages] = React.useState();
 
   const [formState, setFormState] = React.useState(0);
-  
+
   const[open, setOpen] = React.useState(false);
 
   return (
@@ -55,19 +55,38 @@ export default function Authentication() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
+          <div>
+            <Button variant={formState === 0 ? "contained" : ""} onClick={() => setFormState(0)}>
+              SIGN IN
+            </Button>
+            <Button variant={formState === 1 ? "contained" : ""} onClick={() => setFormState(1)}>
+              SIGN UP
+            </Button>
+          </div>
+
+
           <Box component="form" noValidate sx={{ mt: 1 }}>
+    
+            {formState ==1 ? <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Full name"
+              name="username"
+              autoFocus
+              onChange={(e)=>setName(e.target.value)}
+            />:<></>} 
+          
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="username"
+              name="username"
               autoFocus
+              onChange={(e)=>setUsername(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -76,8 +95,10 @@ export default function Authentication() {
               name="password"
               label="Password"
               type="password"
+              onChange={(e)=>setPassword(e.target.value)}
+
               id="password"
-              autoComplete="current-password"
+              
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
