@@ -30,6 +30,15 @@ const defaultTheme = createTheme();
 
 export default function Authentication() {
   
+  const [name, setName] = React.useState();
+  const [username, setUsername] = React.useState();
+  const [pasword, setPassword] = React.useState();
+  const[error, setError] = React.useState();
+  const[messages, setMessages] = React.useState();
+
+  const [formState, setFormState] = React.useState(0);
+  
+  const[open, setOpen] = React.useState(false);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -82,18 +91,7 @@ export default function Authentication() {
             >
               Sign In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+           
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
