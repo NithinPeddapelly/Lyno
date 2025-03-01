@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
             });
 
             // Check if login was successful
-            if (response.status === 200) { 
+            if (response.status === httpStatusCode.OK) { 
                 localStorage.setItem("token", response.data.token); // Store authentication token
                 setUserData(response.data.user); // Save user data in state
                 router("/dashboard"); // Redirect user to dashboard after login
