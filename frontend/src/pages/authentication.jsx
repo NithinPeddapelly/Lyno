@@ -12,6 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AuthContext } from "../contexts/authContext";
+import Snackbar from "@mui/material/Snackbar";
+
 
 function Copyright(props) {
   return (
@@ -32,16 +35,37 @@ export default function Authentication() {
   
   const [name, setName] = React.useState();
   const [username, setUsername] = React.useState();
-  const [pasword, setPassword] = React.useState();
+  const [password, setPassword] = React.useState();
   const[error, setError] = React.useState();
-  const[messages, setMessages] = React.useState();
+  const[message, setMessage] = React.useState();
 
   const [formState, setFormState] = React.useState(0);
 
   const[open, setOpen] = React.useState(false);
 
+  const { handleRegister, handleLogin } = React.useContext(AuthContext);
+
+  let handleAuth = async () => {
+    try{
+      if(formState === 0){
+
+      }
+      if(formState === 1){
+        let result = await handleRegister(name, username, password);
+        console.log(result);
+        setMessage(result);
+        setOpen(true);
+
+      }
+    }catch(err){
+      let message = (err.response.data.message);
+      setError(message);
+    }
+  }
+
   return (
     <ThemeProvider theme={defaultTheme}>
+
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -93,7 +117,7 @@ export default function Authentication() {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="password"
               type="password"
               onChange={(e)=>setPassword(e.target.value)}
 
@@ -117,6 +141,9 @@ export default function Authentication() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
+
+              <Snackbar> open={open} autoHideDuration={6000} messages={message}  </Snackbar>
+
     </ThemeProvider>
   );
 }
