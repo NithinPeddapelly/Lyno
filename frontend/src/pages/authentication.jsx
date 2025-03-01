@@ -14,9 +14,12 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AuthContext } from "../contexts/authContext";
 import Snackbar from "@mui/material/Snackbar";
+import { red } from '@mui/material/colors';
 
 
 function Copyright(props) {
+
+
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -128,13 +131,17 @@ export default function Authentication() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+
+            <p style ={{color:"red"}}>{error}</p>
+            
             <Button
               type="Button"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={handleAuth}
             >
-              Sign In
+              {formState == 0 ? "SIGN IN" : "Register"} 
             </Button>
            
           </Box>
