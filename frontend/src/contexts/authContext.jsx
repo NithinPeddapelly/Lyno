@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
 
             // Check if registration was successful
             if (response.status === 201) { 
+                console.log("User Registered:", request.data.message);
                 return response.data.message; // Return success message
             }
         } catch (err) {
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
             });
 
             // Check if login was successful
-            if (response.status === httpStatusCode.OK) { 
+            if (response.status === 200) { 
                 localStorage.setItem("token", response.data.token); // Store authentication token
                 setUserData(response.data.user); // Save user data in state
                 router("/dashboard"); // Redirect user to dashboard after login

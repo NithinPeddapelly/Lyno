@@ -51,13 +51,17 @@ export default function Authentication() {
   let handleAuth = async () => {
     try{
       if(formState === 0){
-
+        let result = await handleLogin(username, password);
       }
       if(formState === 1){
         let result = await handleRegister(name, username, password);
         console.log(result);
         setMessage(result);
         setOpen(true);
+        setError("");
+        setFormState(0);
+        setUsername("");
+        setPassword("");
 
       }
     }catch(err){
@@ -112,6 +116,7 @@ export default function Authentication() {
               id="username"
               label="username"
               name="username"
+              value={username}
               autoFocus
               onChange={(e)=>setUsername(e.target.value)}
             />
@@ -121,16 +126,14 @@ export default function Authentication() {
               fullWidth
               name="password"
               label="password"
+              valu
               type="password"
               onChange={(e)=>setPassword(e.target.value)}
 
               id="password"
               
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            
 
             <p style ={{color:"red"}}>{error}</p>
             
@@ -149,7 +152,7 @@ export default function Authentication() {
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
 
-              <Snackbar> open={open} autoHideDuration={6000} messages={message}  </Snackbar>
+              <Snackbar> open={open} autoHideDuration={1000} messages={message}  </Snackbar>
 
     </ThemeProvider>
   );
