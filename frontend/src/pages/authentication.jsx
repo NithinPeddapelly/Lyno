@@ -126,7 +126,7 @@ export default function Authentication() {
               fullWidth
               name="password"
               label="password"
-              valu
+              value={password}
               type="password"
               onChange={(e)=>setPassword(e.target.value)}
 
@@ -152,7 +152,8 @@ export default function Authentication() {
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
 
-              <Snackbar> open={open} autoHideDuration={1000} messages={message}  </Snackbar>
+      <Snackbar> open={open} autoHideDuration={1000} messages={message} </Snackbar>
+
 
     </ThemeProvider>
   );
