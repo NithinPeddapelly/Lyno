@@ -1,56 +1,47 @@
-import React, { use, useState } from 'react'
-
+import React, { useState, useRef, useEffect } from "react";
 import "../styles/videoComponent.css";
-
 
 const serverUrl = "http://localhost:8000";
 
-var connections = {};
-
-const peerConfigConnections ={
-    "iceServers": [
+const peerConfigConnections = {
+    iceServers: [
         {
-            "urls": "stun:stun.l.google.com:19302"
-        }
-    ]
-}
-
+            urls: "stun:stun.l.google.com:19302",
+        },
+    ],
+};
 
 export default function VideoMeetComponent() {
-
-    var socketRef = useRef();
-    let socketIdref = useRef();
-
-    let localVideoRef = useRef();
-
-    let [videoAvailable, setVideoAvailable] = useState(true);
-    let [audioAvailable, setAudioAvailable] = useState(true);
-    let [video, setVideo] = useState();
-    let [audio, setAudio] = useState();
-    let [screen, setScreen] = useState();
-    let [showModal, setModal] = useState();
-    let [screenAvailable, setScreenAvailable] = useState();
-    let [messages , setMessages] = useState([]);
-    let [message , setMessage] = useState("");
-    let [newMessages , setNewMessages] = useState(0);
-    let [askForUsername, setAskForUsername] = useState(True);
-    let [username, setUsername] = useState("");
-
+    const socketRef = useRef();
+    const socketIdRef = useRef();
+    const localVideoRef = useRef();
     const videoRef = useRef([]);
 
-    let[vidoes, setVideos] = useState([]);
+    const [videoAvailable, setVideoAvailable] = useState(true);
+    const [audioAvailable, setAudioAvailable] = useState(true);
+    const [video, setVideo] = useState(null);
+    const [audio, setAudio] = useState(null);
+    const [screen, setScreen] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [screenAvailable, setScreenAvailable] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [message, setMessage] = useState("");
+    const [newMessages, setNewMessages] = useState(0);
+    const [askForUsername, setAskForUsername] = useState(true);
+    const [username, setUsername] = useState("");
+    const [videos, setVideos] = useState([]);
 
-    // if(isChrome()== false){}
+    useEffect(() => {
+     
+    }, []);
 
     return (
         <div>
-            
-            {askForUsername == true ? 
+            {askForUsername === true ? 
                 <div>
-
-
-
-                </div> : <></>
-        }</div>
-    )
+                    <h2>Enter Lobby</h2>
+                </div> :<></>
+            }
+        </div>
+    );
 }
