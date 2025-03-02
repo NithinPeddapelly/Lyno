@@ -3,6 +3,7 @@ import { AuthProvider } from "./contexts/authContext";
 import Authentication from "./pages/authentication";
 import LandingPage from "./pages/landing";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import VideoMeetComponent from "./pages/videoMeet";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<Authentication />} /> 
+        <Route path="/:url" element={<VideoMeetComponent />} />
       </Routes>
 
       </AuthProvider>
