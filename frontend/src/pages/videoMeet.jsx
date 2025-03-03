@@ -115,7 +115,7 @@ export default function VideoMeetComponent() {
 
   return (
     <div>
-      {askForUsername && (
+      {askForUsername === true ? (
         <div>
           <h2>LOBBY</h2>
           <TextField
@@ -133,6 +133,8 @@ export default function VideoMeetComponent() {
             <video ref={localVideoRef} autoPlay muted></video>
           </div>
         </div>
+      ) : (
+        <> </>
       )}
     </div>
   );
