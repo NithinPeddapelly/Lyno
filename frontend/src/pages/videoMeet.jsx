@@ -101,6 +101,9 @@ export default function VideoMeetComponent() {
       getUserMedia();
     }
   }, [audio, video]);
+  let connectToSocketServer = () => {
+    socketRef.current = io.connect(server_Url, { secure: false });
+  };
 
   let getMedia = () => {
     setVideo(videoAvailable);
