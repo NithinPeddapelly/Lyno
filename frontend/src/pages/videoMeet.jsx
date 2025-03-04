@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { TextField, Button, Typography, Dialog, Card } from "@mui/material";
 import "../styles/videoComponent.css";
+import { io } from "socket.io-client";
+
+
 
 const serverUrl = "http://localhost:8000";
 
@@ -101,9 +104,40 @@ export default function VideoMeetComponent() {
       getUserMedia();
     }
   }, [audio, video]);
+
   let connectToSocketServer = () => {
-    socketRef.current = io.connect(server_Url, { secure: false });
+    socketRef.current = io.connect(serverUrl, { secure: false });
+  
+    socketRef.current.on("signal", gotMessageFromServer);
+  
+    socketRef.current.on("connect", () => {
+      socketRef.current.emit("join-call", window.location.href);
+  
+      socketIdRef.current = socketRef.current.id; // Stores the socket ID
+  
+      // Listen for incoming chat messages
+      socketRef.current.on("chat-message", addMessage);
+  
+      // Handle when a user leaves
+      socketRef.current.on("user-left", (id) => {
+        setVideos((videos) => videos.filter((video) => video.socketId !== id));
+      });
+  
+      // Handle when a user joins
+      socketRef.current.on("user-joined", (id, clients) => {
+        clients.forEach((socketListId) => {
+          connection[socketListId] = new RTCPeerConnection(peerConfigConnections);
+
+          connection[socketListId].onicecandidate = (event) => {
+            if (event.candidate !== null) {
+              socketRef.current.emit("Signal", socketListId, JSON.stringify({"ice":event.candidate}));
+            }
+          }
+        });
+      });
+    });
   };
+  
 
   let getMedia = () => {
     setVideo(videoAvailable);
