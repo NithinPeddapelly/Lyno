@@ -154,9 +154,12 @@ export default function VideoMeetComponent() {
                 videoRef.current = updatedVideos;
                 return updatedVideos;
               })
-
             }
+          };
+          if(window.localStream !== undefined && window.localStream !== null){
+            connections[socketListId].addStream(window.localStream);
           }
+
         });
       });
     });
