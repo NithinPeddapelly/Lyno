@@ -108,7 +108,7 @@ export default function VideoMeetComponent() {
   let connectToSocketServer = () => {
     socketRef.current = io.connect(serverUrl, { secure: false });
   
-    socketRef.current.on("signal", gotMessageFromServer);
+    socketRef.current.on("Signal", gotMessageFromServer);
   
     socketRef.current.on("connect", () => {
       socketRef.current.emit("join-call", window.location.href);
@@ -131,6 +131,28 @@ export default function VideoMeetComponent() {
           connection[socketListId].onicecandidate = (event) => {
             if (event.candidate !== null) {
               socketRef.current.emit("Signal", socketListId, JSON.stringify({"ice":event.candidate}));
+            }
+          }
+          connections[socketListId].onaddstream = (event) => {
+            let videoExists = videoRef.current.find(video => video.socketId === socketListId);
+            if (!videoExists) {
+            setVideo(videos =>{
+              const updatedVideos = videos.map(video =>
+                video.socketId === socketListId ? {...video, stream: event.stream} : video
+              )
+              videoRef.current = updatedVideos;
+              return updatedVideos;
+            })
+            } else{
+              let newViedo = {socketId: socketListId,
+                stream: event.stream,
+                autoPlay: true,
+                playsinline: true,
+              }
+              setVideos(viedos=>{
+                const updatedVideos = [...viedos, newViedo];
+              })
+
             }
           }
         });
