@@ -150,7 +150,8 @@ export default function VideoMeetComponent() {
                 playsinline: true,
               }
               setVideos(viedos=>{
-                const updatedVideos = [...viedos, newViedo];
+                const updatedVideos = [...viedos, newViedo]; // spread operator to create a new array
+                videoRef.current = updatedVideos;
               })
 
             }
