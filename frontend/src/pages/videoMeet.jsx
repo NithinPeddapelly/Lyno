@@ -152,6 +152,7 @@ export default function VideoMeetComponent() {
               setVideos(viedos=>{
                 const updatedVideos = [...viedos, newViedo]; // spread operator to create a new array
                 videoRef.current = updatedVideos;
+                return updatedVideos;
               })
 
             }
