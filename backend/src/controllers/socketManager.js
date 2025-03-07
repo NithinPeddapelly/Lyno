@@ -23,6 +23,7 @@ export const connectToSocket = (server) => {
   io.on("connection", (socket) => {
     // Handling new socket connections
     console.log("SOCKET CONNECTED");
+
     // Handling users joining a call
     socket.on("join-call", (path) => {
       if (connections[path] === undefined) {
@@ -82,8 +83,8 @@ export const connectToSocket = (server) => {
 
         console.log("message", KeyboardEvent, ":", sender, data);
 
-        connection[matchingRoom].forEach((elem) => {
-          // Send the message to all users in the room // Send the message to all users in the call
+        connections[matchingRoom].forEach((elem) => {
+          // Send the message to all users in the room
           io.to(elem).emit("chat-message", data, sender, socket.id);
         });
       }
