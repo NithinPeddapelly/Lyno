@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { TextField, Button, Badge, IconButton } from "@mui/material";
-import "../styles/videoComponent.css";
+import styles from "../styles/videoComponent.module.css";
 import { io } from "socket.io-client";
+import VideocamIcon from '@mui/icons-material/Videocam';
 
 const serverUrl = "http://localhost:8000";
 
@@ -337,16 +338,14 @@ let gotMessageFromServer = (fromId, message) => {
       socketRef.current.on("user-left", (id) => {
         setVideos((videos) => videos.filter((video) => video.socketId !== id)); // Remove the user's video from the state
       });
-
-      // Handle when a user joins
-      socketRef.current.on("user-joined", (id, clients) => {
+      
+      socketRef.current.on("user-joined", (id, clients) => { // Handle when a user joins
         clients.forEach((socketListId) => {
           connections[socketListId] = new RTCPeerConnection(
             peerConfigConnections
           ); // Create a new peer connection
-
-          // Wait for their ICE candidate
-          connections[socketListId].onicecandidate = function (event) {
+         
+          connections[socketListId].onicecandidate = function (event) { // Wait for their ICE candidate
             if (event.candidate != null) {
               socketRef.current.emit(
                 "signal",
