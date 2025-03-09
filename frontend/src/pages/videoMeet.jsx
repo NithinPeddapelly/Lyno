@@ -3,6 +3,13 @@ import { TextField, Button, Badge, IconButton } from "@mui/material";
 import styles from "../styles/videoComponent.module.css";
 import { io } from "socket.io-client";
 import VideocamIcon from '@mui/icons-material/Videocam';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff'
+import CallEndIcon from '@mui/icons-material/CallEnd'
+import MicIcon from '@mui/icons-material/Mic'
+import MicOffIcon from '@mui/icons-material/MicOff'
+import ScreenShareIcon from '@mui/icons-material/ScreenShare';
+import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
+import ChatIcon from '@mui/icons-material/Chat'
 
 const serverUrl = "http://localhost:8000";
 
@@ -588,18 +595,18 @@ let gotMessageFromServer = (fromId, message) => {
           )}
 
           <div className={styles.buttonContainers}>
-            <IconButton onClick={handleVideo} style={{ color: "white" }}>
+            <IconButton onClick={handleVideo} style={{ color: "ivory" }}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
             <IconButton onClick={handleEndCall} style={{ color: "red" }}>
               <CallEndIcon />
             </IconButton>
-            <IconButton onClick={handleAudio} style={{ color: "white" }}>
+            <IconButton onClick={handleAudio} style={{ color: "ivory" }}>
               {audio === true ? <MicIcon /> : <MicOffIcon />}
             </IconButton>
 
             {screenAvailable === true ? (
-              <IconButton onClick={handleScreen} style={{ color: "white" }}>
+              <IconButton onClick={handleScreen} style={{ color: "ivory" }}>
                 {screen === true ? (
                   <ScreenShareIcon />
                 ) : (
