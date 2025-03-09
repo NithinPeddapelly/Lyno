@@ -4,7 +4,7 @@
   background: url("/background.png");
   background-size: cover;
   background-repeat: no-repeat;
-  color:azure;
+  color: #FFF3CF;
 }
 
 .landingPageContainer nav {
@@ -13,10 +13,12 @@
   display: flex;
   justify-content: space-between;
 }
+
 .landingPageContainer nav h2{
   font-size: 1.8rem;
   font-weight: bold;
 }
+
 .landingPageContainer nav .navlist{
   display: flex; 
   gap: 1.6rem;
@@ -31,13 +33,12 @@
   align-items: center;
 }
 
-
 .landingMainContainer  > div:nth-child(1){
   font-size: 2rem;
 }
 
 .landingMainContainer  > div:nth-child(1) div[role = "button"]{
-  background: orange;
+  background: #ffab04;
   width: fit-content;
   padding:1rem;
   border-radius: 16px;
