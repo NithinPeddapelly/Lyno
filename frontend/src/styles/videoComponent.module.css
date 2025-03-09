@@ -1,0 +1,10 @@
+.meetVideoContainer{
+    display: flex;
+    position: relative ;
+
+}
+
+.meetVideoContainer > .meetUserVideo{
+    position: absolute;
+    
+}
