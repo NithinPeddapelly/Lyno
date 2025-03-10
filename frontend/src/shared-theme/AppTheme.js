@@ -2,12 +2,12 @@ import { createTheme } from "@mui/material/styles";
 
 const AppTheme = createTheme({
   palette: {
-    mode: "light", // or "dark"
+    mode: "dark",
     primary: {
-      main: "#1976d2",
+      main: "#041d02",
     },
     secondary: {
-      main: "#dc004e",
+      main: "#4ce031",
     },
   },
 });
