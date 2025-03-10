@@ -44,7 +44,7 @@ export default function VideoMeetComponent()
 
   const [videos, setVideos] = useState([]); // hold video streams of Remote users
   const [showModal, setShowModal] = useState(false); // show/hide chat modal
-  const [newMessages, setNewMessages] = useState(0); // Count of new messages
+  const [newMessages, setNewMessages] = useState(6); // Count of new messages
 
   useEffect(() => {
     //runs when the component mounts to get user permissions for video or audio
@@ -462,14 +462,12 @@ let gotMessageFromServer = (fromId, message) => {
 
   // Function to toggle video state
   let handleVideo = () => {
-    setVideo(!video); // Toggle the video state
-    // getUser Media(); // Uncomment to get user media again
+    setVideo(!video); // Toggle the video state // getUser Media();Uncomment to get user media again
   };
 
   // Function to toggle audio state
   let handleAudio = () => {
-    setAudio(!audio); // Toggle the audio state
-    // getUser Media(); // Uncomment to get user media again
+    setAudio(!audio); // Toggle the audio state // getUser Media(); Uncomment to get user media again
   };
 
   // Effect to get display media when screen state changes
@@ -595,32 +593,35 @@ let gotMessageFromServer = (fromId, message) => {
           )}
 
           <div className={styles.buttonContainers}>
-            <IconButton onClick={handleVideo} style={{ color: "ivory" }}>
+            <IconButton onClick={handleVideo} style={{ color: "#000000" }}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
-            <IconButton onClick={handleEndCall} style={{ color: "red" }}>
+
+            <IconButton onClick={handleEndCall} style={{ color: "Red" }}>
               <CallEndIcon />
             </IconButton>
-            <IconButton onClick={handleAudio} style={{ color: "ivory" }}>
+
+            <IconButton onClick={handleAudio} style={{ color: "#000000" }}>
               {audio === true ? <MicIcon /> : <MicOffIcon />}
             </IconButton>
 
             {screenAvailable === true ? (
-              <IconButton onClick={handleScreen} style={{ color: "ivory" }}>
+              <IconButton onClick={handleScreen} style={{ color: "#000000" }}>
                 {screen === true ? (
                   <ScreenShareIcon />
                 ) : (
                   <StopScreenShareIcon />
                 )}
               </IconButton>
+
             ) : (
               <></>
             )}
 
-            <Badge badgeContent={newMessages} max={999} color="orange">
+            <Badge badgeContent={newMessages} max={699} color="primary">
               <IconButton
                 onClick={() => setModal(!showModal)}
-                style={{ color: "white" }}
+                style={{ color: "#000000" }}
               >
                 <ChatIcon />{" "}
               </IconButton>
