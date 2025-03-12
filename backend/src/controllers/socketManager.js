@@ -81,7 +81,7 @@ export const connectToSocket = (server) => {
           "socket-id-sender": socket.id,
         });
 
-        console.log("message", KeyboardEvent, ":", sender, data);
+        console.log("message", matchingRoom, ":", sender, data);
 
         connections[matchingRoom].forEach((elem) => {
           // Send the message to all users in the room
