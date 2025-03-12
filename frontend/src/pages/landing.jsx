@@ -7,7 +7,7 @@ export default function LandingPage() {
     <div className="landingPageContainer">
       <nav>
         <div className="navHeader">
-          <h2>LYNO</h2>
+          <h3>LYNO</h3>
         </div>
 
         <div className="navlist">
@@ -20,8 +20,7 @@ export default function LandingPage() {
       </nav>
       <div className="landingMainContainer">
         <div>
-          <h1>
-            <span style={{ color: "orange" }}>Seamless</span> Communication,
+          <h1> Communication,
             Anytime, Anywhere
           </h1>
 

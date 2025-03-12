@@ -16,49 +16,47 @@ const serverUrl = "http://localhost:8000";
 var connections = {}; // Object to hold Peer connections for each user
 
 const peerConfigConnections = {
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }], // Configuration for WebRTC peer c0nnections, using Google's STUN server for NAT traversal
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }], // Configuration for WebRTC peer connections
 };
 
-export default function VideoMeetComponent() 
-{
-  	//  Using refs to hold mutable values that do not cause re-renders
-  var socketRef = useRef(); //  Reference for socket connection
-  let socketIdRef = useRef(); //  Reference to store the socket ID of the current user
-  let localVideoref = useRef(); //	Reference for the local video element
-  let videoRef = useRef([]); //  Reference to hold video elements for remote users
+export default function VideoMeetComponent() {
+  // Using refs to hold mutable values that do not cause re-renders
+  var socketRef = useRef(); // Reference for socket connection
+  let socketIdRef = useRef(); // Reference to store the socket ID of the current user
+  let localVideoref = useRef(); // Reference for the local video element
+  let videoRef = useRef([]); // Reference to hold video elements for remote users
 
-  const [videoAvailable, setVideoAvailable] = useState(true); // Is video,audio available?
-  const [audioAvailable, setAudioAvailable] = useState(true);
+  const [videoAvailable, setVideoAvailable] = useState(true); // Is video available?
+  const [audioAvailable, setAudioAvailable] = useState(true); // Is audio available?
 
-  const [video, setVideo] = useState(null);  // States for managing video,audio stream
-  const [audio, setAudio] = useState(null);
+  const [video, setVideo] = useState(null); // States for managing video stream
+  const [audio, setAudio] = useState(null); // States for managing audio stream
 
-  const [screen, setScreen] = useState(null);  // State to manage screen sharing
+  const [screen, setScreen] = useState(null); // State to manage screen sharing
+  const [screenAvailable, setScreenAvailable] = useState(false); // Screen sharing availability
 
-  const [screenAvailable, setScreenAvailable] = useState(false); // screen sharing availablity
   const [messages, setMessages] = useState([]); // State to hold chat messages
-  const [message, setMessage] = useState("");  //  current message input
+  const [message, setMessage] = useState(""); // Current message input
 
-  const [askForUsername, setAskForUsername] = useState(true); // ask for username
-  const [username, setUsername] = useState(""); // hold the username
+  const [askForUsername, setAskForUsername] = useState(true); // Ask for username
+  const [username, setUsername] = useState(""); // Hold the username
 
-  const [videos, setVideos] = useState([]); // hold video streams of Remote users
-  const [showModal, setShowModal] = useState(false); // show/hide chat modal
+  const [videos, setVideos] = useState([]); // Hold video streams of remote users
+  const [showModal, setShowModal] = useState(false); // Show/hide chat modal
   const [newMessages, setNewMessages] = useState(0); // Count of new messages
 
   useEffect(() => {
-    //runs when the component mounts to get user permissions for video or audio
+    // Runs when the component mounts to get user permissions for video or audio
     console.log("Lights, camera, connection");
-    getPermissions(); //  get permissions for media
-  }, []); // this runs only once
+    getPermissions(); // Get permissions for media
+  }, []);
 
   let getDislayMedia = () => {
-    
-    if (screen) {	// screen sharing fonction
-     
-      if (navigator.mediaDevices.getDisplayMedia) {   // Check if screen sharing is enabled
-       
-        navigator.mediaDevices 			// Check wheaterh the browser supports screen sharing
+    if (screen) {
+      // Screen sharing function
+      if (navigator.mediaDevices.getDisplayMedia) {
+        // Check if screen sharing is enabled
+        navigator.mediaDevices
           .getDisplayMedia({ video: true, audio: true }) // Request screen sharing
           .then(getDislayMediaSuccess) // On success, call the success handler
           .catch((e) => console.log(e)); // Log any errors
@@ -66,50 +64,46 @@ export default function VideoMeetComponent()
     }
   };
 
-  const getPermissions = async () => {  
-    
-    try { // Function to get permissions for video and audio
+  const getPermissions = async () => {
+    try {
+      // Function to get permissions for video and audio
       const videoPermission = await navigator.mediaDevices.getUserMedia({
-        // Request video permission
         video: true,
       });
       if (videoPermission) {
         setVideoAvailable(true);
-        console.log("Video-authorized");
+        console.log("Video authorized");
       } else {
         setVideoAvailable(false);
         console.log("Video: User has not granted permission");
       }
 
       const audioPermission = await navigator.mediaDevices.getUserMedia({
-       
-        audio: true,  // Request audio permission
+        audio: true,
       });
       if (audioPermission) {
-        setAudioAvailable(true); // Audio is authorized
+        setAudioAvailable(true);
         console.log("Audio authorized");
       } else {
-        setAudioAvailable(false); // Audio is not authorized
+        setAudioAvailable(false);
         console.log("Audio: User has not granted permission");
       }
 
       if (navigator.mediaDevices.getDisplayMedia) {
-        
-        setScreenAvailable(true); //  Check if screen sharing is available
+        setScreenAvailable(true); // Check if screen sharing is available
       } else {
         setScreenAvailable(false);
       }
 
       if (videoAvailable || audioAvailable) {
-        
-        const userMediaStream = await navigator.mediaDevices.getUserMedia({ // If either video or audio is available, this will get the media stream
-          video: videoAvailable, //Requesting user media
+        const userMediaStream = await navigator.mediaDevices.getUserMedia({
+          video: videoAvailable,
           audio: audioAvailable,
         });
         if (userMediaStream) {
-          window.localStream = userMediaStream; // Store the local stream globally "Buwa Hahaha I'm a local stream"
+          window.localStream = userMediaStream; // Store the local stream globally
           if (localVideoref.current) {
-            localVideoref.current.srcObject = userMediaStream; // Set the local video element's source- "aye aye cap"
+            localVideoref.current.srcObject = userMediaStream; // Set the local video element's source
           }
         }
       }
@@ -119,39 +113,35 @@ export default function VideoMeetComponent()
   };
 
   useEffect(() => {
-
-    if (video !== undefined && audio !== undefined) { //   fetch user media when video or audio state changes
+    if (video !== undefined && audio !== undefined) {
       getUserMedia(); // Call - get user media
       console.log("SET STATE HAS ", video, audio); // Log the states
     }
-  }, [video, audio]); // Dependencies: A & V states
+  }, [video, audio]);
 
   let getMedia = () => {
     // Function to initiate media stream and connect to the socket server
-    setVideo(videoAvailable); // Set video,Audio state based on availability
+    setVideo(videoAvailable); // Set video, audio state based on availability
     setAudio(audioAvailable);
     connectToSocketServer();
   };
 
   let getUserMediaSuccess = (stream) => {
-    
-    try { // if Success - handler for getting user media
+    try {
       window.localStream.getTracks().forEach((track) => track.stop()); // Stop any existing tracks
     } catch (e) {
       console.log(e);
     }
 
-    window.localStream = stream; //  Store the new stream globally
-    localVideoref.current.srcObject = stream; // 	Set the local video element's source
+    window.localStream = stream; // Store the new stream globally
+    localVideoref.current.srcObject = stream; // Set the local video element's source
 
     for (let id in connections) {
-      // Loop through all connections and add the local stream
-      if (id === socketIdRef.current) continue;  // Skip the current user's connection
+      if (id === socketIdRef.current) continue; // Skip the current user's connection
 
-      connections[id].addStream(window.localStream); 	// Add local to peer
+      connections[id].addStream(window.localStream); // Add local to peer
 
       connections[id].createOffer().then((description) => {
-        // Creating offer for remote peer
         console.log(description);
         connections[id]
           .setLocalDescription(description) // Set local description
@@ -159,91 +149,83 @@ export default function VideoMeetComponent()
             socketRef.current.emit(
               "signal",
               id,
-              JSON.stringify({ sdp: connections[id].localDescription }) //  Send offer t0 remote peer
+              JSON.stringify({ sdp: connections[id].localDescription }) // Send offer to remote peer
             );
           })
           .catch((e) => console.log(e));
       });
     }
 
-    stream.getTracks().forEach(
-      // Handle track ending (like- user stops video or some other reason)
-      (track) =>
-        (track.onended = () => {
-          setVideo(false); // Updates video state
-          setAudio(false); //Updates audio state
+    stream.getTracks().forEach((track) => {
+      track.onended = () => {
+        setVideo(false); // Updates video state
+        setAudio(false); // Updates audio state
 
-          try {
-            let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
-            tracks.forEach((track) => track.stop()); // Stop all tracks
-          } catch (e) {
-            console.log(e); // Log any errors
-          }
+        try {
+          let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
+          tracks.forEach((track) => track.stop()); // Stop all tracks
+        } catch (e) {
+          console.log(e); // Log any errors
+        }
 
-         
-          let blackSilence = (...args) =>   // Creates a black screen and silence-  when the user stops video/audio
-            new MediaStream([black(...args), silence()]);
-          window.localStream = blackSilence();  // Update the local stream
-          localVideoref.current.srcObject = window.localStream; // Set the local video element's source
+        let blackSilence = (...args) =>
+          new MediaStream([black(...args), silence()]); // Creates a black screen and silence
+        window.localStream = blackSilence(); // Update the local stream
+        localVideoref.current.srcObject = window.localStream; // Set the local video element's source
 
-          
-          for (let id in connections) { // Loop through all connections and add the black silence stream
-            connections[id].addStream(window.localStream);	 // Adding the black silence stream
+        for (let id in connections) {
+          connections[id].addStream(window.localStream); // Adding the black silence stream
 
-            connections[id].createOffer().then((description) => {
-              connections[id]
-                .setLocalDescription(description) // Set the local description
-                .then(() => {
-                  socketRef.current.emit(
-                    "signal",
-                    id,
-                    JSON.stringify({ sdp: connections[id].localDescription }) // Send updated offer
-                  );
-                })
-                .catch((e) => console.log(e)); 
-            });
-          }
-        })
-    );
+          connections[id].createOffer().then((description) => {
+            connections[id]
+              .setLocalDescription(description) // Set the local description
+              .then(() => {
+                socketRef.current.emit(
+                  "signal",
+                  id,
+                  JSON.stringify({ sdp: connections[id].localDescription }) // Send updated offer
+                );
+              })
+              .catch((e) => console.log(e));
+          });
+        }
+      };
+    });
   };
 
-  
-  let getUserMedia = () => {  	// Function to get user media based on current video/audio states
+  let getUserMedia = () => {
     if ((video && videoAvailable) || (audio && audioAvailable)) {
       navigator.mediaDevices
         .getUserMedia({ video: video, audio: audio }) // Request user media
-        .then(getUserMediaSuccess)  // On success, call the success handler
+        .then(getUserMediaSuccess) // On success, call the success handler
         .catch((e) => console.log(e));
     } else {
       try {
-        let tracks = localVideoref.current.srcObject.getTracks(); 	// Get current tracks
-        tracks.forEach((track) => track.stop()); //    Stop all tracks
+        let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
+        tracks.forEach((track) => track.stop()); // Stop all tracks
       } catch (e) {}
     }
   };
 
-  // Success handler for getting display media (screen sharing)
   let getDislayMediaSuccess = (stream) => {
-    console.log("HERE"); // Just a friendly log
+    console.log("HERE");
     try {
       window.localStream.getTracks().forEach((track) => track.stop()); // Stop existing tracks
     } catch (e) {
-      console.log(e); // Log any errors
+      console.log(e);
     }
 
     window.localStream = stream; // Store the new stream globally
     localVideoref.current.srcObject = stream; // Set the local video element's source
 
-    // Loop through all connections and add the local stream
     for (let id in connections) {
-      if (id === socketIdRef.current) continue; 	// Skip the current user's connection
+      if (id === socketIdRef.current) continue; // Skip the current user's connection
 
-      connections[id].addStream(window.localStream);  // Add the local stream to the peer connection
+      connections[id].addStream(window.localStream); // Add the local stream to the connection
 
-      // Create an offer for the remote peer
       connections[id].createOffer().then((description) => {
         connections[id]
-          .setLocalDescription(description) 	// Set the local description
+          .setLocalDescription(description) // Set the local description
           .then(() => {
             socketRef.current.emit(
               "signal",
@@ -251,85 +233,69 @@ export default function VideoMeetComponent()
               JSON.stringify({ sdp: connections[id].localDescription }) // Send the offer to the remote peer
             );
           })
-          .catch((e) => console.log(e)); 	// Log any errors
+          .catch((e) => console.log(e));
       });
     }
 
-    // Handle track ending (e.g., user stops screen sharing)
-    stream.getTracks().forEach((
-      track) =>
-        (track.onended = () => {
-          setScreen(false); 	// Update screen state
-      try {
-            let tracks = localVideoref.current.srcObject.getTracks();  // Get current tracks
-            tracks.forEach((track) => track.stop()); // Stop all tracks
-          } catch (e) {
-            console.log(e);  // Log any errors
-          }
+    stream.getTracks().forEach((track) => {
+      track.onended = () => {
+        setScreen(false); // Update screen state
+        try {
+          let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
+          tracks.forEach((track) => track.stop()); // Stop all tracks
+        } catch (e) {
+          console.log(e);
+        }
 
-          // Create a black screen and silence for when the user stops screen sharing
-          let blackSilence = (...args) => new MediaStream([black(...args), silence()]);
-          window.localStream = blackSilence(); 	 // Update the local stream
-          localVideoref.current.srcObject = window.localStream;  // Set the local video element's source
+        let blackSilence = (...args) =>
+          new MediaStream([black(...args), silence()]); // Create a black screen and silence
+        window.localStream = blackSilence(); // Update the local stream
+        localVideoref.current.srcObject = window.localStream; // Set the local video element's source
 
-          getUserMedia(); // Call to get user media again
-        })
-    );
+        getUserMedia(); // Call to get user media again
+      };
+    });
   };
 
-// Function "The Watchdog 🐕‍🦺" - Your vigilant guardian that handles incoming messages from the server
-let gotMessageFromServer = (fromId, message) => {
-	var signal = JSON.parse(message); // Parse the incoming message
-  
-	if (fromId !== socketIdRef.current) {
-	  // Ignore messages from the current user
-	  console.log("🐕Watchdog🐕‍🦺: Analyzing transmission… only secure messages shall pass.");
-  
-	  if (signal.sdp) {
-		// If the message contains an SDP - Watchdog verifies it
-		console.log(" Watchdog 🐕‍🦺: Signal recognized. Processing secure connection...");
-  
-		connections[fromId]
-		  .setRemoteDescription(new RTCSessionDescription(signal.sdp)) // Set the remote description
-		  .then(() => {
-			if (signal.sdp.type === "offer") {
-			  // If it's an offer
-			  console.log(" Watchdog🐕‍🦺: Offer detected. Responding with an answer.");
-  
-			  connections[fromId]
-				.createAnswer() // Create an answer
-				.then((description) => {
-				  connections[fromId]
-					.setLocalDescription(description) // Set the local description
-					.then(() => {
-					  socketRef.current.emit(
-						"signal",
-						fromId,
-						JSON.stringify({
-						  sdp: connections[fromId].localDescription, // Send the answer back
-						})
-					  );
-					})
-					.catch((e) => console.log("🐶 Watchdog Alert: Error setting local description.", e)); 
-				})
-				.catch((e) => console.log("🐶 Watchdog Alert: Error creating an answer.", e)); 
-			}
-		  })
-		  .catch((e) => console.log("🐶 Watchdog Alert: Error setting remote description.", e));
-	  }
+  let gotMessageFromServer = (fromId, message) => {
+    var signal = JSON.parse(message); // Parse the incoming message
 
-	  if (signal.ice) {
-		// If the message contains ICE candidates - Watchdog secures them
-		console.log("🐕‍🦺 Watchdog: ICE candidate received. Securing connection...");
-  
-		connections[fromId]
-		  .addIceCandidate(new RTCIceCandidate(signal.ice)) // Add the ICE candidate to the connection
-		  .catch((e) => console.log("🐶  Watchdog Alert: Error adding ICE candidate.", e)); // Log errors
-	  }
-	}
+    if (fromId !== socketIdRef.current) {
+      if (signal.sdp) {
+        connections[fromId]
+          .setRemoteDescription(new RTCSessionDescription(signal.sdp)) // Set the remote description
+          .then(() => {
+            if (signal.sdp.type === "offer") {
+              connections[fromId]
+                .createAnswer() // Create an answer
+                .then((description) => {
+                  connections[fromId]
+                    .setLocalDescription(description) // Set the local description
+                    .then(() => {
+                      socketRef.current.emit(
+                        "signal",
+                        fromId,
+                        JSON.stringify({
+                          sdp: connections[fromId].localDescription, // Send the answer back
+                        })
+                      );
+                    })
+                    .catch((e) => console.log(e));
+                })
+                .catch((e) => console.log(e));
+            }
+          })
+          .catch((e) => console.log(e));
+      }
+
+      if (signal.ice) {
+        connections[fromId]
+          .addIceCandidate(new RTCIceCandidate(signal.ice)) // Add the ICE candidate to the connection
+          .catch((e) => console.log(e));
+      }
+    }
   };
-  
-  // Function to connect to the socket server
+
   let connectToSocketServer = () => {
     socketRef.current = io.connect(serverUrl, { secure: false }); // Connect to the socket server
 
@@ -341,18 +307,15 @@ let gotMessageFromServer = (fromId, message) => {
 
       socketRef.current.on("chat-message", addMessage); // Listen for incoming chat messages
 
-      // Handle when a user leaves
       socketRef.current.on("user-left", (id) => {
         setVideos((videos) => videos.filter((video) => video.socketId !== id)); // Remove the user's video from the state
       });
-      
-      socketRef.current.on("user-joined", (id, clients) => { // Handle when a user joins
+
+      socketRef.current.on("user-joined", (id, clients) => {
         clients.forEach((socketListId) => {
-          connections[socketListId] = new RTCPeerConnection(
-            peerConfigConnections
-          ); // Create a new peer connection
-         
-          connections[socketListId].onicecandidate = function (event) { // Wait for their ICE candidate
+          connections[socketListId] = new RTCPeerConnection(peerConfigConnections); // Create a new peer connection
+
+          connections[socketListId].onicecandidate = function (event) {
             if (event.candidate != null) {
               socketRef.current.emit(
                 "signal",
@@ -362,31 +325,22 @@ let gotMessageFromServer = (fromId, message) => {
             }
           };
 
-          // Wait for their video stream
           connections[socketListId].onaddstream = (event) => {
-            console.log("BEFORE:", videoRef.current); // Log the current video references
-            console.log("FINDING ID: ", socketListId); // Log the ID being processed
-
             let videoExists = videoRef.current.find(
               (video) => video.socketId === socketListId // Check if the video already exists
             );
 
             if (videoExists) {
-              console.log("FOUND EXISTING"); // Log if an existing video is found
-
-              // Update the stream of the existing video
               setVideos((videos) => {
                 const updatedVideos = videos.map((video) =>
                   video.socketId === socketListId
                     ? { ...video, stream: event.stream } // Update the stream for the existing video
                     : video
                 );
-                videoRef.current = updatedVideos; // Update the video references
-                return updatedVideos; // Return the updated videos
+                videoRef.current = updatedVideos;
+                return updatedVideos;
               });
             } else {
-              // Create a new video
-              console.log("CREATING NEW"); // Log that a new video is being created
               let newVideo = {
                 socketId: socketListId,
                 stream: event.stream,
@@ -396,24 +350,22 @@ let gotMessageFromServer = (fromId, message) => {
 
               setVideos((videos) => {
                 const updatedVideos = [...videos, newVideo]; // Add the new video to the state
-                videoRef.current = updatedVideos; // Update the video references
-                return updatedVideos; // Return the updated videos
+                videoRef.current = updatedVideos;
+                return updatedVideos;
               });
             }
           };
 
-          // Add the local video stream
           if (window.localStream !== undefined && window.localStream !== null) {
             connections[socketListId].addStream(window.localStream); // Add the local stream to the connection
           } else {
             let blackSilence = (...args) =>
               new MediaStream([black(...args), silence()]); // Create a black silence stream
-            window.localStream = blackSilence(); // Update the local stream
-            connections[socketListId].addStream(window.localStream); // Add the black silence stream
+            window.localStream = blackSilence();
+            connections[socketListId].addStream(window.localStream);
           }
         });
 
-        // If the current user just joined, add their stream to all other connections
         if (id === socketIdRef.current) {
           for (let id2 in connections) {
             if (id2 === socketIdRef.current) continue; // Skip the current user's connection
@@ -432,7 +384,7 @@ let gotMessageFromServer = (fromId, message) => {
                     JSON.stringify({ sdp: connections[id2].localDescription }) // Send the offer to the remote peer
                   );
                 })
-                .catch((e) => console.log(e)); // Log any errors
+                .catch((e) => console.log(e));
             });
           }
         }
@@ -440,7 +392,6 @@ let gotMessageFromServer = (fromId, message) => {
     });
   };
 
-  // Function to create a silent audio track
   let silence = () => {
     let ctx = new AudioContext(); // Create a new audio context
     let oscillator = ctx.createOscillator(); // Create an oscillator
@@ -450,41 +401,34 @@ let gotMessageFromServer = (fromId, message) => {
     return Object.assign(dst.stream.getAudioTracks()[0], { enabled: false }); // Return a silent audio track
   };
 
-  // Function to create a black video track
-  let black = ({ width = 1280, height = 720 } = {}) => {
+  let black = ({ width = 640, height = 480 } = {}) => {
     let canvas = Object.assign(document.createElement("canvas"), {
-      width,height
+      width,
+      height,
     });
     canvas.getContext("2d").fillRect(0, 0, width, height); // Fill the canvas with black
     let stream = canvas.captureStream(); // Capture the canvas as a video stream
     return Object.assign(stream.getVideoTracks()[0], { enabled: false }); // Return a black video track
   };
 
-  // Function to toggle video state
   let handleVideo = () => {
     setVideo(!video); // Toggle the video state
-    // getUser Media(); // Uncomment to get user media again
   };
 
-  // Function to toggle audio state
   let handleAudio = () => {
     setAudio(!audio); // Toggle the audio state
-    // getUser Media(); // Uncomment to get user media again
   };
 
-  // Effect to get display media when screen state changes
   useEffect(() => {
     if (screen !== undefined) {
       getDislayMedia(); // Call to get display media
     }
-  }, [screen]); // Dependency: screen state
+  }, [screen]);
 
-  // Function to toggle screen sharing state
   let handleScreen = () => {
     setScreen(!screen); // Toggle the screen state
   };
 
-  // Function to end the call and redirect to the home page
   let handleEndCall = () => {
     try {
       let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
@@ -493,23 +437,19 @@ let gotMessageFromServer = (fromId, message) => {
     window.location.href = "/"; // Redirect to the home page
   };
 
-  // Function to open the chat modal
   let openChat = () => {
-    setModal(true); // Show the chat modal
+    setShowModal(true); // Show the chat modal
     setNewMessages(0); // Reset new messages count
   };
 
-  // Function to close the chat modal
   let closeChat = () => {
-    setModal(false); // Hide the chat modal
+    setShowModal(false); // Hide the chat modal
   };
 
-  // Function to handle message input changes
   let handleMessage = (e) => {
     setMessage(e.target.value); // Update the message state
   };
 
-  // Function to add a message to the chat
   const addMessage = (data, sender, socketIdSender) => {
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -520,14 +460,11 @@ let gotMessageFromServer = (fromId, message) => {
     }
   };
 
-  // Function to send a message to the chat
   let sendMessage = () => {
-    console.log(socketRef.current); // Log the current socket reference
     socketRef.current.emit("chat-message", message, username); // Send the message to the server
     setMessage(""); // Clear the message input
   };
 
-  // Function to connect the user and get media
   let connect = () => {
     setAskForUsername(false); // Hide the username prompt
     getMedia(); // Call to get media
@@ -561,13 +498,12 @@ let gotMessageFromServer = (fromId, message) => {
                 <h1>Chat</h1>
 
                 <div className={styles.chattingDisplay}>
-                  {messages.length !== 0 ? (
-                    messages.map((item, index) => {
-                      console.log(messages);
+                  {messages.length !== 0 ? (messages.map((item, index) => {
                       return (
-                        <div style={{ marginBottom: "20px" }} key={index}>
-                          <p style={{ fontWeight: "bold" }}>{item.sender}</p>
-                          <p>{item.data}</p>
+                        <div style={{ marginBottom: "8px" }} key={index}>
+                          <p>{item.sender}</p>
+                          <p style={{ fontSize: "18px" }}>{item.data}</p>
+                        
                         </div>
                       );
                     })
@@ -579,7 +515,7 @@ let gotMessageFromServer = (fromId, message) => {
                 <div className={styles.chattingArea}>
                   <TextField
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={handleMessage}
                     id="outlined-basic"
                     label="Enter Your chat"
                     variant="outlined"
@@ -590,39 +526,37 @@ let gotMessageFromServer = (fromId, message) => {
                 </div>
               </div>
             </div>
-          ) : (
-            <></>
-          )}
+          ) : null}
 
           <div className={styles.buttonContainers}>
-            <IconButton onClick={handleVideo} style={{ color: "ivory" }}>
+            <IconButton onClick={handleVideo} style={{ color: "#000000" }}>
               {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
-            <IconButton onClick={handleEndCall} style={{ color: "red" }}>
+
+            <IconButton onClick={handleEndCall} style={{ color: "Red" }}>
               <CallEndIcon />
             </IconButton>
-            <IconButton onClick={handleAudio} style={{ color: "ivory" }}>
+
+            <IconButton onClick={handleAudio} style={{ color: "#000000" }}>
               {audio === true ? <MicIcon /> : <MicOffIcon />}
             </IconButton>
 
             {screenAvailable === true ? (
-              <IconButton onClick={handleScreen} style={{ color: "ivory" }}>
+              <IconButton onClick={handleScreen} style={{ color: "#000000" }}>
                 {screen === true ? (
                   <ScreenShareIcon />
                 ) : (
                   <StopScreenShareIcon />
                 )}
               </IconButton>
-            ) : (
-              <></>
-            )}
+            ) : null}
 
-            <Badge badgeContent={newMessages} max={999} color="orange">
+            <Badge badgeContent={newMessages} max={999} color="primary">
               <IconButton
-                onClick={() => setModal(!showModal)}
-                style={{ color: "white" }}
+                onClick={() => setShowModal(!showModal)}
+                style={{ color: "#000000" }}
               >
-                <ChatIcon />{" "}
+                <ChatIcon />
               </IconButton>
             </Badge>
           </div>
@@ -653,4 +587,4 @@ let gotMessageFromServer = (fromId, message) => {
       )}
     </div>
   );
-  }
+}
