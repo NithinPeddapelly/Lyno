@@ -1,10 +1,10 @@
 .landingPageContainer {
-  height: 100vh;
   width: 100vw;
-  background: url("/background.png");
-  background-size: cover;
+  height: 100vh;
+  background: url("/public/background.png");
   background-repeat: no-repeat;
-  color: #FFF3CF;
+  background-size: cover;
+  color: white;
 }
 
 .landingPageContainer nav {
@@ -12,52 +12,178 @@
   padding-block: 1.6rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+
 }
 
-.landingPageContainer nav h2{
+.landingPageContainer nav h2 {
   font-size: 1.8rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
-.landingPageContainer nav .navlist{
-  display: flex; 
+.landingPageContainer nav .navlist {
+  display: flex;
   gap: 1.6rem;
   cursor: pointer;
+
 }
 
-.landingMainContainer{
+.landingMainContainer {
   display: flex;
   justify-content: space-between;
   padding-inline: 3rem;
-  height: 70vh;
+  height: 80vh;
   align-items: center;
 }
 
-.landingMainContainer  > div:nth-child(1){
-  font-size: 2rem;
+.landingMainContainer>div:nth-child(1) {
+  font-size: 2.2rem;
 }
 
-.landingMainContainer  > div:nth-child(1) div[role = "button"]{
-  background: #ffab04;
+.landingMainContainer>div:nth-child(1) div[role='button'] {
+  background: #6c63ff;
   width: fit-content;
-  padding:1rem;
-  border-radius: 16px;
-  margin-top: 1.6rem;
-}
-.landingMainContainer  > div:nth-child(1) div[role = "button"] a {
-  text-decoration: none;
-  color: azure;
-  font-size: 2rem;
+  padding: 1rem;
+  border-radius: 20px;
+  margin-top: 1.9rem;
 }
 
-.landingMainContainer > div:nth-child(2) img {
-  height: 80vh;
+.landingMainContainer>div:nth-child(1) div[role='button'] a {
+  text-decoration: none;
+  color: white;
+  font-size: 1.7rem;
+}
+
+.landingMainContainer>div:nth-child(2) img {
+  height: 70vh;
   width: auto;
 }
 
-.navBar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding-inline:22px;
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 20px;
+  text-align: center;
+
+}
+.meetContainer {
+  display: flex;
+  padding-inline: 20px;
+  height: 80vh;
+  gap: 10vw;
+  justify-content: center;
+}
+
+
+
+.leftPanel {
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+}
+
+.rightPanel {
+  display: flex;
+  align-items: center;
+}
+
+.rightPanel > img {
+  width: 30vw;
+  height: auto;
+  border-radius: 20px;
+}
+
+
+/* Meet Container */
+.meetContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  gap: 5vw;
+  padding: 2rem;
+}
+
+/* Left Panel */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.leftPanel .inputContainer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.leftPanel input {
+  padding: 0.8rem;
+  border-radius: 5px;
+  border: 2px solid #6c63ff;
+  width: 250px;
+  outline: none;
+}
+
+.leftPanel input:focus {
+  border-color: #574bff;
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.5);
+}
+
+.leftPanel button {
+  background-color: #6c63ff;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.leftPanel button:hover {
+  background-color: #574bff;
+}
+
+/* Right Panel */
+.rightPanel img {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* History Button */
+.historyButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c63ff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.historyButton:hover {
+  color: #574bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navBar {
+    flex-direction: column;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .meetContainer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .leftPanel input {
+    width: 100%;
+  }
 }
