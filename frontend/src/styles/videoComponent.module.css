@@ -98,3 +98,13 @@
     background: #f4f4f4; /* Light background for input area */
     border-radius: 10px; /* Rounded corners */
 }
+
+
+.meetVideoContainer{
+    position: relative;
+}
+
+.meetVideoContainer > .meetUserVideo{
+    position: absolute;
+    bottom: 10vh;
+}
