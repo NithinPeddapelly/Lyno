@@ -22,13 +22,13 @@
 }
 
 .container {
-    max-width: 600px;
+    max-width:5000px;
     margin: 2rem auto;
     padding: 1rem;
     text-align: center;
-    background-color: #fff;
+    background-color: #000000;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border-radius: 80px;
 }
 
 .container h5 {
