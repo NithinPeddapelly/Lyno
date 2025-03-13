@@ -1,0 +1,50 @@
+.navBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.navBar h4 {
+    margin: 0;
+}
+
+.navBar .navActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navBar .navActions p {
+    margin: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1rem;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.container h5 {
+    margin-bottom: 1rem;
+}
+
+.container .inputField {
+    margin-bottom: 1rem;
+}
+
+.container .joinButton {
+    width: 100%;
+}
+
+.historyButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
