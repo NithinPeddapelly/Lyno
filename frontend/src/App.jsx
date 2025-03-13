@@ -1,5 +1,5 @@
 import "./App.css";
-import { AuthProvider } from "./contexts/authContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Authentication from "./pages/authentication";
 import LandingPage from "./pages/landing";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
