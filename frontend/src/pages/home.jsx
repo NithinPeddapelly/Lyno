@@ -59,7 +59,7 @@ function HomeComponent() {
             </div>
           </div>
         </div>
-        <div className="leftPanel">
+        <div className="rightPanel">
           <img srcSet="/buhh.svg" alt="" />
         </div>
       </div>
