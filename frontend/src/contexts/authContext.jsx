@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      // Check if login was successful
+      // Check if login was successful.
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token); // Store authentication token
         setUserData(response.data.user); // Save user data in state
