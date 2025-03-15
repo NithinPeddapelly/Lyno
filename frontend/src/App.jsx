@@ -1,7 +1,7 @@
 import "./App.css";
 import { createTheme,ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AuthProvider } from "./contexts/authContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Authentication from "./pages/authentication";
 import LandingPage from "./pages/landing";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";

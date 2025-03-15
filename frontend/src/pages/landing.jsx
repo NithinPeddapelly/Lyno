@@ -15,7 +15,11 @@ export default function LandingPage() {
           <p onClick={()=>{
             router("Guest-User")
           }}>Join as a Guest</p>
-          <p>Register</p>
+          <div onClick={()=>{
+            router("/auth")
+          }} role="button">
+            <p>Register</p>
+          </div>
           <div onClick={()=>{
             router("/auth")
           }} role="button">
