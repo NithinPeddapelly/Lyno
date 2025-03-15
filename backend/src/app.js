@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 import { createServer } from "node:http";
-import { Server } from "socket.io";
+// import { Server } from "socket.io";
 import mongoose from "mongoose";
 import { connectToSocket } from "./controllers/socketManager.js";
 
@@ -14,7 +14,7 @@ const app = express(); // Creating an instance of Express
 const server = createServer(app); // Creating an HTTP server and integrating it with Express
 const io = connectToSocket(server); // Initializing Socket.IO and connecting it to the server
 
-app.set("port", process.env.PORT || 8000); // Setting the port for the server (default: 8000)
+app.set("port", (process.env.PORT || 8000)); // Setting the port for the server (default: 8000)
 app.use(cors());
 app.use(express.json({ limit: "40kb" }));
 app.use(express.urlencoded({ limit: "40kb", extended: true }));
