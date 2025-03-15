@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
       // Check if registration was successful
       if (response.status === 201) {
-        console.log("User Registered:", request.data.message);
+        console.log("User  Registered:", response.data.message); // Corrected from 'request' to 'response'
         return response.data.message; // Return success message
       }
     } catch (err) {
@@ -45,14 +45,39 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      // Check if login was successful
+      // Check if login was successful.
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token); // Store authentication token
         setUserData(response.data.user); // Save user data in state
-        router("/dashboard"); // Redirect user to dashboard after login
+        router("/home"); // Redirect user to home after login
       }
     } catch (err) {
       console.error("Login Error:", err);
+      throw err;
+    }
+  };
+
+  const getHistoryOfUser  = async () => {
+    try {
+      let request = await client.get("/get_all_activity", {
+        params: {
+          token: localStorage.getItem("token"),
+        },
+      });
+      return request.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const addToUserHistory = async (meetingCode) => {
+    try {
+      let request = await client.post("/add_to_activity", {
+        token: localStorage.getItem("token"),
+        meeting_code: meetingCode,
+      });
+      return request;
+    } catch (err) {
       throw err;
     }
   };
@@ -63,6 +88,8 @@ export const AuthProvider = ({ children }) => {
     setUserData,
     handleRegister,
     handleLogin,
+    addToUserHistory,
+    getHistoryOfUser ,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
