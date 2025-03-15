@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { Button, IconButton, TextField } from "@mui/material";
 import RestoreIcon from "@mui/icons-material/Restore";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../contexts/authContext";
 
 function HomeComponent() {
   let navigate = useNavigate();
@@ -59,7 +59,7 @@ function HomeComponent() {
             </div>
           </div>
         </div>
-        <div className="leftPanel">
+        <div className="rightPanel">
           <img srcSet="/buhh.svg" alt="" />
         </div>
       </div>

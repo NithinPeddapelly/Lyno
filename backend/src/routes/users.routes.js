@@ -1,5 +1,5 @@
 import { Router } from "express"; // Importing Router from Express to define API routes
-import { addToHistory, login, register } from "../controllers/user.controller.js";  // Importing login and register functions from the users controller
+import { addToHistory, login, register,getUserHistory } from "../controllers/user.controller.js";  // Importing login and register functions from the users controller
 const router = Router(); // Creating an instance of the Express router
 
 // Defining API endpoints

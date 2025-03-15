@@ -95,8 +95,6 @@
   border-radius: 20px;
 }
 
-
-/* Meet Container */
 .meetContainer {
   display: flex;
   justify-content: center;
@@ -106,7 +104,7 @@
   padding: 2rem;
 }
 
-/* Left Panel */
+
 .leftPanel {
   display: flex;
   flex-direction: column;
@@ -186,4 +184,21 @@
   .leftPanel input {
     width: 100%;
   }
+}
+.meetVideoContainer {
+  position: relative;
+}
+
+.meetVideoContainer > .meetUserVideo {
+  position: absolute;
+  bottom: 10vh;
+}
+
+.meetContainer {
+  display: flex;
+  justify-content: center;
+  padding-inline: 200px;
+  height: 80vh;
+  gap: 10vw;
+    
 }

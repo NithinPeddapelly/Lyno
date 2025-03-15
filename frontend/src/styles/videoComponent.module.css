@@ -99,21 +99,3 @@
   border-radius: 10px; /* Rounded corners */
 }
 
-.meetVideoContainer {
-  position: relative;
-}
-
-.meetVideoContainer > .meetUserVideo {
-  position: absolute;
-  bottom: 10vh;
-}
-
-.meetContainer {
-  display: flex;
-  justify-content: center;
-  padding-inline: 200px;
-  height: 80vh;
-  gap: 10vw;
-    
-}
-
