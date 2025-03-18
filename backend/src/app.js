@@ -1,67 +1,50 @@
-import dotenv from "dotenv";
-dotenv.config(); // Load environment variables
-
 import express from "express";
 import { createServer } from "node:http";
+import { Server } from "socket.io";
 import mongoose from "mongoose";
-import cors from "cors";
-import userRoutes from "./routes/users.routes.js"; // Importing user routes
 import { connectToSocket } from "./controllers/socketManager.js";
+import cors from "cors";
+import userRoutes from "./routes/users.routes.js";
 
-const app = express(); // Creating an instance of Express
-const server = createServer(app); // Creating an HTTP server
-const io = connectToSocket(server); // Initializing Socket.IO
+const app = express();
 
-// Middleware
+// Create an HTTP server using Express
+const server = createServer(app);
+
+// Initialize Socket.io with the HTTP server
+const io = connectToSocket(server);
+
+// Set the port for the server, defaulting to 8000 if not specified in the environment variables
 app.set("port", process.env.PORT || 8000);
-app.use(cors());
-app.use(express.json({ limit: "40kb" }));
-app.use(express.urlencoded({ limit: "40kb", extended: true }));
 
-// Routes
-app.use("/api/v1/users", userRoutes);
+// Middleware setup
+app.use(cors()); // Enable CORS to allow cross-origin requests
+app.use(express.json({ limit: "40kb" })); // Parse incoming JSON requests with a limit of 40kb
+app.use(express.urlencoded({ limit: "40kb", extended: true })); // Parse URL-encoded data with the same size limit
 
-// Debugging: Log environment variables
-console.log("🔍 Checking environment variables...");
-console.log("DB_USER:", process.env.DB_USER || "❌ Not Defined");
-console.log("DB_CLUSTER:", process.env.DB_CLUSTER || "❌ Not Defined");
-console.log("DB_NAME:", process.env.DB_NAME || "❌ Not Defined");
+// Define routes
+app.use("/api/v1/users", userRoutes); // User-related API routes
 
+// Function to start the server and connect to the database
 const start = async () => {
-  try {
-    // Validate MongoDB environment variables
-    if (!process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_CLUSTER || !process.env.DB_NAME) {
-      console.error("❌ Error: Missing MongoDB environment variables!");
-      process.exit(1);
+    try {
+        // Set MongoDB user (not actually used in this code, ensure it's properly configured)
+        app.set("mongo_user");
+        
+        // Connect to MongoDB Atlas cluster
+        const connectionDb = await mongoose.connect("mongodb+srv://nithin_peddapellyLYNO:enteryourpasswordhere@cluster.qq0z7.mongodb.net/");
+        
+        console.log(`MONGO Connected. DB Host: ${connectionDb.connection.host}`);
+        
+        // Start the server and listen on the defined port
+        server.listen(app.get("port"), () => {
+            console.log(`LISTENING ON PORT ${app.get("port")}`);
+        });
+    } catch (error) {
+        console.error("Error starting the server:", error);
+        process.exit(1); // Exit process with failure if connection fails
     }
-
-    // Construct MongoDB URI
-    const mongoURI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}`;
-    console.log("🔗 Mongo URI:", mongoURI);
-
-    // Connect to MongoDB
-    const connectionDb = await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log(`✅ MONGO connected: ${connectionDb.connection.host}`);
-
-    // Start the server
-    server.listen(app.get("port"), () => {
-      console.log(`🚀 Server running on port ${app.get("port")}`);
-    });
-
-  } catch (error) {
-    console.error("❌ MongoDB Connection Failed:", error.message);
-    process.exit(1);
-  }
 };
 
-// Test Route
-app.get("/api/test", (req, res) => {
-  res.json({ message: "✅ Backend is connected!" });
-});
-
-// Start the app
+// Call the start function to initiate the server and database connection
 start();

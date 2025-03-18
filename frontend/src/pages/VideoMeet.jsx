@@ -45,7 +45,7 @@ export default function VideoMeetComponent() {
   const [videos, setVideos] = useState([]); // Hold video streams of remote users
   const [showModal, setShowModal] = useState(false); // Show/hide chat modal
   const [newMessages, setNewMessages] = useState(0); // Count of new messages
-
+  const [videoSize, setVideoSize] = useState(1);
   const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
