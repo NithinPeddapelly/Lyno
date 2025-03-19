@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-const { connection } = mongoose; // Extracts the connection object from mongoose
 import { Server } from "socket.io";
 
 let connections = {}; // Stores active connections for each call
@@ -8,9 +6,7 @@ let timeOnline = {}; // Stores the time a user joined the call
 
 // Function to initialize and configure Socket.IO server
 export const connectToSocket = (server) => {
-  // 'server' is the Node.js HTTP server
   const io = new Server(server, {
-    // Creating a new Socket.IO server instance
     cors: {
       // Allowing cross-origin requests for testing; will be removed in production
       origin: "*",
@@ -22,7 +18,7 @@ export const connectToSocket = (server) => {
 
   io.on("connection", (socket) => {
     // Handling new socket connections
-    console.log("SOCKET CONNECTED");
+    console.log("SOMETHING CONNECTED");
 
     // Handling users joining a call
     socket.on("join-call", (path) => {
@@ -32,9 +28,12 @@ export const connectToSocket = (server) => {
       connections[path].push(socket.id); // Store the socket ID for the call
       timeOnline[socket.id] = new Date(); // Track when the user joined
 
-      // Notify existing users about the new participant
       for (let a = 0; a < connections[path].length; a++) {
-        io.to(connections[path][a]).emit("user-joined", socket.id);
+        io.to(connections[path][a]).emit(
+          "user-joined",
+          socket.id,
+          connections[path]
+        );
       }
 
       // Send stored chat messages to the newly joined user
@@ -57,9 +56,7 @@ export const connectToSocket = (server) => {
 
     socket.on("chat-message", (data, sender) => {
       // Handling chat messages in a call
-
       const [matchingRoom, found] = Object.entries(connections).reduce(
-        // Find the room where the sender is present
         ([room, isFound], [roomKey, roomValue]) => {
           if (!isFound && roomValue.includes(socket.id)) {
             return [roomKey, true]; // Properly updates the room when found
@@ -75,7 +72,6 @@ export const connectToSocket = (server) => {
         }
 
         messages[matchingRoom].push({
-          // Store the message in the room
           sender: sender,
           data: data,
           "socket-id-sender": socket.id,
@@ -84,7 +80,6 @@ export const connectToSocket = (server) => {
         console.log("message", matchingRoom, ":", sender, data);
 
         connections[matchingRoom].forEach((elem) => {
-          // Send the message to all users in the room
           io.to(elem).emit("chat-message", data, sender, socket.id);
         });
       }

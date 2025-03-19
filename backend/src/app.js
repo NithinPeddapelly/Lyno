@@ -1,41 +1,50 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import express from "express";
 import { createServer } from "node:http";
-// import { Server } from "socket.io";
+import { Server } from "socket.io";
 import mongoose from "mongoose";
 import { connectToSocket } from "./controllers/socketManager.js";
-
 import cors from "cors";
-import userRoutes from "./routes/users.routes.js"; // Importing user routes
+import userRoutes from "./routes/users.routes.js";
 
-const app = express(); // Creating an instance of Express
-const server = createServer(app); // Creating an HTTP server and integrating it with Express
-const io = connectToSocket(server); // Initializing Socket.IO and connecting it to the server
+const app = express();
 
-app.set("port", (process.env.PORT || 8000)); // Setting the port for the server (default: 8000)
-app.use(cors());
-app.use(express.json({ limit: "40kb" }));
-app.use(express.urlencoded({ limit: "40kb", extended: true }));
+// Create an HTTP server using Express
+const server = createServer(app);
 
-app.use("/api/v1/users", userRoutes); // Using the user routes for all endpoints starting with /api/v1"old users"/users - just in case they didnt update to new api
+// Initialize Socket.io with the HTTP server
+const io = connectToSocket(server);
 
+// Set the port for the server, defaulting to 8000 if not specified in the environment variables
+app.set("port", process.env.PORT || 8000);
+
+// Middleware setup
+app.use(cors()); // Enable CORS to allow cross-origin requests
+app.use(express.json({ limit: "40kb" })); // Parse incoming JSON requests with a limit of 40kb
+app.use(express.urlencoded({ limit: "40kb", extended: true })); // Parse URL-encoded data with the same size limit
+
+// Define routes
+app.use("/api/v1/users", userRoutes); // User-related API routes
+
+// Function to start the server and connect to the database
 const start = async () => {
-  const mongoURI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}`; // Constructing MongoDB connection URI
-  const connectionDb = await mongoose.connect(mongoURI); // Establishing connection to MongoDB
-  console.log(`MONGO connected DB host: ${connectionDb.connection.host}`); // Logging database connection confirmation
-
-  server.listen(app.get("port"), () => {
-    // Starting the server
-    console.log(`Server is running on port ${app.get("port")}`); // Starting the server and logging confirmation
-  });
+    try {
+        // Set MongoDB user (not actually used in this code, ensure it's properly configured)
+        app.set("mongo_user");
+        
+        // Connect to MongoDB Atlas cluster
+        const connectionDb = await mongoose.connect("mongodb+srv://nithin_peddapellyLYNO:enteryourpasswordhere@cluster.qq0z7.mongodb.net/");
+        
+        console.log(`MONGO Connected. DB Host: ${connectionDb.connection.host}`);
+        
+        // Start the server and listen on the defined port
+        server.listen(app.get("port"), () => {
+            console.log(`LISTENING ON PORT ${app.get("port")}`);
+        });
+    } catch (error) {
+        console.error("Error starting the server:", error);
+        process.exit(1); // Exit process with failure if connection fails
+    }
 };
 
-//Testing
-
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Backend is connected!" });
-});
-
-start(); // Initializing the server and database connection
+// Call the start function to initiate the server and database connection
+start();
