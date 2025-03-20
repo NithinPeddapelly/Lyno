@@ -18,7 +18,12 @@ const io = connectToSocket(server);
 app.set("port", process.env.PORT || 8000);
 
 // Middleware setup
-app.use(cors()); // Enable CORS to allow cross-origin requests
+app.use(cors({              // Enable CORS to allow cross-origin requests
+    origin: "https://lyno-frontend.onrender.com",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true
+  }));
+   
 app.use(express.json({ limit: "40kb" })); // Parse incoming JSON requests with a limit of 40kb
 app.use(express.urlencoded({ limit: "40kb", extended: true })); // Parse URL-encoded data with the same size limit
 
