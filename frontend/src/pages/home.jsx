@@ -50,7 +50,7 @@ function HomeComponent() {
               <TextField
                 onChange={(e) => setMeetingCode(e.target.value)}
                 id="outlined-basic"
-                label="Meeting Code"
+                label="Lyno Key"
                 variant="outlined"
               />
               <Button onClick={handleJoinVideoCall} variant="contained">
