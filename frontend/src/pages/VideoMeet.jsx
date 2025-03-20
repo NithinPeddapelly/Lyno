@@ -11,8 +11,9 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
 import ChatIcon from '@mui/icons-material/Chat';
+import server from "../environment";
 
-const serverUrl = "http://localhost:8000";
+const serverUrl = server.prod; // Server URL
 
 var connections = {}; // Object to hold Peer connections for each user
 
