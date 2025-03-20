@@ -67,7 +67,6 @@ export default function VideoMeetComponent() {
 
   const getPermissions = async () => {
     try {
-      // Function to get permissions for video and audio
       const videoPermission = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
@@ -104,9 +103,14 @@ export default function VideoMeetComponent() {
         if (userMediaStream) {
           window.localStream = userMediaStream; // Store the local stream globally
           if (localVideoref.current) {
-
             localVideoref.current.srcObject = userMediaStream; // Set the local video element's source
           }
+        }
+      } else {
+        // Initialize with black silence stream if no permissions are granted
+        window.localStream = blackSilence();
+        if (localVideoref.current) {
+          localVideoref.current.srcObject = window.localStream;
         }
       }
     } catch (error) {
@@ -129,12 +133,13 @@ export default function VideoMeetComponent() {
   };
 
   let getUserMediaSuccess = (stream) => {
-    try {
-      window.localStream.getTracks().forEach((track) => track.stop());
-    } catch (e) {
-      console.log(e);
+    if (window.localStream) {
+      try {
+        window.localStream.getTracks().forEach((track) => track.stop());
+      } catch (e) {
+        console.log(e);
+      }
     }
-
     window.localStream = stream; // Store the new stream globally
     localVideoref.current.srcObject = stream; // Set the local video element's source
 
@@ -208,21 +213,24 @@ export default function VideoMeetComponent() {
       navigator.mediaDevices
         .getUserMedia({ video: video, audio: audio }) // Request user media
         .then(getUserMediaSuccess) // On success, call the success handler
-        .catch((e) => console.log(e)); 
+        .catch((e) => console.log(e));
     } else {
-      try {
-        let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
-        tracks.forEach((track) => track.stop()); // Stop all tracks
-      } catch (e) {}
+      if (window.localStream) {
+        try {
+          let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
+          tracks.forEach((track) => track.stop()); // Stop all tracks
+        } catch (e) {}
+      }
     }
   };
 
   let getDisplayMediaSuccess = (stream) => {
-    console.log("HERE");
-    try {
-      window.localStream.getTracks().forEach((track) => track.stop());
-    } catch (e) {
-      console.log(e);
+    if (window.localStream) {
+      try {
+        window.localStream.getTracks().forEach((track) => track.stop());
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     window.localStream = stream; // Store the new stream globally
@@ -420,15 +428,6 @@ export default function VideoMeetComponent() {
     });
   };
 
-  let silence = () => {
-    let ctx = new AudioContext(); // Create a new audio context
-    let oscillator = ctx.createOscillator(); // Create an oscillator
-    let dst = oscillator.connect(ctx.createMediaStreamDestination()); // Connect to a media stream destination
-    oscillator.start(); // Start the oscillator
-    ctx.resume(); // Resume the audio context
-    return Object.assign(dst.stream.getAudioTracks()[0], { enabled: false }); // Return a silent audio track
-  };
-
   let black = ({ width = 640, height = 480 } = {}) => {
     let canvas = Object.assign(document.createElement("canvas"), {
       width,
@@ -438,6 +437,17 @@ export default function VideoMeetComponent() {
     let stream = canvas.captureStream(); // Capture the canvas as a video stream
     return Object.assign(stream.getVideoTracks()[0], { enabled: false }); // Return a black video track
   };
+  
+  let silence = () => {
+    let ctx = new AudioContext(); // Create a new audio context
+    let oscillator = ctx.createOscillator(); // Create an oscillator
+    let dst = oscillator.connect(ctx.createMediaStreamDestination()); // Connect to a media stream destination
+    oscillator.start(); // Start the oscillator
+    ctx.resume(); // Resume the audio context
+    return Object.assign(dst.stream.getAudioTracks()[0], { enabled: false }); // Return a silent audio track
+  };
+  
+  let blackSilence = () => new MediaStream([black(), silence()]); // Combine black video and silence
 
   let handleVideo = () => {
     setVideo(!video); // Toggle the video state
