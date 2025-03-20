@@ -1,63 +1,58 @@
-import { createContext, useState } from "react";
 import axios from "axios";
+import httpStatus from "http-status";
+import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+// import server from "../environment";
 
-// Create a context to store authentication-related data and functions
 export const AuthContext = createContext({});
 
-// Configure Axios with the base URL for API requests
 const client = axios.create({
   baseURL: "http://localhost:8000/api/v1/users",
 });
 
 export const AuthProvider = ({ children }) => {
-  // State to store user data after authentication
-  const [userData, setUserData] = useState(null);
+  const authContext = useContext(AuthContext);
 
-  // Hook for programmatic navigation
+  const [userData, setUserData] = useState(authContext);
+
   const router = useNavigate();
 
-  // Function to handle user registration
   const handleRegister = async (name, username, password) => {
     try {
-      const response = await client.post("/register", {
-        name,
-        username,
-        password,
+      let request = await client.post("/register", {
+        name: name,
+        username: username,
+        password: password,
       });
 
-      // Check if registration was successful
-      if (response.status === 201) {
-        console.log("User  Registered:", response.data.message); // Corrected from 'request' to 'response'
-        return response.data.message; // Return success message
+      if (request.status === httpStatus.CREATED) {
+        return request.data.message;
       }
     } catch (err) {
-      console.error("Registration Error:", err);
       throw err;
     }
   };
 
-  // Function to handle user login
   const handleLogin = async (username, password) => {
     try {
-      const response = await client.post("/login", {
-        username,
-        password,
+      let request = await client.post("/login", {
+        username: username,
+        password: password,
       });
 
-      // Check if login was successful.
-      if (response.status === 200) {
-        localStorage.setItem("token", response.data.token); // Store authentication token
-        setUserData(response.data.user); // Save user data in state
-        router("/home"); // Redirect user to home after login
+      console.log(username, password);
+      console.log(request.data);
+
+      if (request.status === httpStatus.OK) {
+        localStorage.setItem("token", request.data.token);
+        router("/home");
       }
     } catch (err) {
-      console.error("Login Error:", err);
       throw err;
     }
   };
 
-  const getHistoryOfUser  = async () => {
+  const getHistoryOfUser = async () => {
     try {
       let request = await client.get("/get_all_activity", {
         params: {
@@ -77,19 +72,18 @@ export const AuthProvider = ({ children }) => {
         meeting_code: meetingCode,
       });
       return request;
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
   };
 
-  // Provide authentication-related data and functions to child components
   const data = {
     userData,
     setUserData,
+    addToUserHistory,
+    getHistoryOfUser,
     handleRegister,
     handleLogin,
-    addToUserHistory,
-    getHistoryOfUser ,
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
