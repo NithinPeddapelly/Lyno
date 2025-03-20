@@ -45,7 +45,6 @@ export default function VideoMeetComponent() {
   const [videos, setVideos] = useState([]); // Hold video streams of remote users
   const [showModal, setShowModal] = useState(false); // Show/hide chat modal
   const [newMessages, setNewMessages] = useState(0); // Count of new messages
-  const [videoSize, setVideoSize] = useState(1);
   const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
@@ -54,14 +53,12 @@ export default function VideoMeetComponent() {
     getPermissions(); // Get permissions for media
   }, []);
 
-  let getDislayMedia = () => {
+  let getDisplayMedia = () => {
     if (screen) {
-      // Screen sharing function
       if (navigator.mediaDevices.getDisplayMedia) {
-        // Check if screen sharing is enabled
         navigator.mediaDevices
           .getDisplayMedia({ video: true, audio: true }) // Request screen sharing
-          .then(getDislayMediaSuccess) // On success, call the success handler
+          .then(getDisplayMediaSuccess)  // On success, call the success handler
           .catch((e) => console.log(e)); // Log any errors
       }
     }
@@ -106,7 +103,7 @@ export default function VideoMeetComponent() {
         if (userMediaStream) {
           window.localStream = userMediaStream; // Store the local stream globally
           if (localVideoref.current) {
-           
+
             localVideoref.current.srcObject = userMediaStream; // Set the local video element's source
           }
         }
@@ -119,7 +116,7 @@ export default function VideoMeetComponent() {
   useEffect(() => {
     if (video !== undefined && audio !== undefined) {
       getUserMedia(); // Call - get user media
-      console.log("SET STATE HAS ", video, audio); // Log the states
+      console.log("SET STATE HAS ", video, audio); // Log the state
     }
   }, [video, audio]);
 
@@ -132,7 +129,7 @@ export default function VideoMeetComponent() {
 
   let getUserMediaSuccess = (stream) => {
     try {
-      window.localStream.getTracks().forEach((track) => track.stop()); // Stop any existing tracks
+      window.localStream.getTracks().forEach((track) => track.stop());
     } catch (e) {
       console.log(e);
     }
@@ -150,11 +147,15 @@ export default function VideoMeetComponent() {
         connections[id]
           .setLocalDescription(description) // Set local description
           .then(() => {
-            socketRef.current.emit(
-              "signal",
-              id,
-              JSON.stringify({ sdp: connections[id].localDescription }) // Send offer to remote peer
-            );
+            if (socketRef.current) {
+              socketRef.current.emit(
+                "signal",
+                id,
+                JSON.stringify({ sdp: connections[id].localDescription })
+              );
+            } else {
+              console.error("socketRef.current is undefined");
+            }
           })
           .catch((e) => console.log(e));
       });
@@ -184,11 +185,15 @@ export default function VideoMeetComponent() {
             connections[id]
               .setLocalDescription(description) // Set the local description
               .then(() => {
-                socketRef.current.emit(
-                  "signal",
-                  id,
-                  JSON.stringify({ sdp: connections[id].localDescription }) // Send updated offer
-                );
+                if (socketRef.current) {
+                  socketRef.current.emit(
+                    "signal",
+                    id,
+                    JSON.stringify({ sdp: connections[id].localDescription })
+                  );
+                } else {
+                  console.error("socketRef.current is undefined");
+                }
               })
               .catch((e) => console.log(e));
           });
@@ -202,7 +207,7 @@ export default function VideoMeetComponent() {
       navigator.mediaDevices
         .getUserMedia({ video: video, audio: audio }) // Request user media
         .then(getUserMediaSuccess) // On success, call the success handler
-        .catch((e) => console.log(e));
+        .catch((e) => console.log(e)); 
     } else {
       try {
         let tracks = localVideoref.current.srcObject.getTracks(); // Get current tracks
@@ -211,10 +216,10 @@ export default function VideoMeetComponent() {
     }
   };
 
-  let getDislayMediaSuccess = (stream) => {
+  let getDisplayMediaSuccess = (stream) => {
     console.log("HERE");
     try {
-      window.localStream.getTracks().forEach((track) => track.stop()); // Stop existing tracks
+      window.localStream.getTracks().forEach((track) => track.stop());
     } catch (e) {
       console.log(e);
     }
@@ -231,11 +236,15 @@ export default function VideoMeetComponent() {
         connections[id]
           .setLocalDescription(description) // Set the local description
           .then(() => {
-            socketRef.current.emit(
-              "signal",
-              id,
-              JSON.stringify({ sdp: connections[id].localDescription }) // Send the offer to the remote peer
-            );
+            if (socketRef.current) {
+              socketRef.current.emit(
+                "signal",
+                id,
+                JSON.stringify({ sdp: connections[id].localDescription })
+              );
+            } else {
+              console.error("socketRef.current is undefined");
+            }
           })
           .catch((e) => console.log(e));
       });
@@ -262,27 +271,31 @@ export default function VideoMeetComponent() {
   };
 
   let gotMessageFromServer = (fromId, message) => {
-    var signal = JSON.parse(message); // Parse the incoming message
+    var signal = JSON.parse(message);
 
     if (fromId !== socketIdRef.current) {
       if (signal.sdp) {
         connections[fromId]
-          .setRemoteDescription(new RTCSessionDescription(signal.sdp)) // Set the remote description
+          .setRemoteDescription(new RTCSessionDescription(signal.sdp))
           .then(() => {
             if (signal.sdp.type === "offer") {
               connections[fromId]
-                .createAnswer() // Create an answer
+                .createAnswer()
                 .then((description) => {
                   connections[fromId]
-                    .setLocalDescription(description) // Set the local description
+                    .setLocalDescription(description)
                     .then(() => {
-                      socketRef.current.emit(
-                        "signal",
-                        fromId,
-                        JSON.stringify({
-                          sdp: connections[fromId].localDescription, // Send the answer back
-                        })
-                      );
+                      if (socketRef.current) {
+                        socketRef.current.emit(
+                          "signal",
+                          fromId,
+                          JSON.stringify({
+                            sdp: connections[fromId].localDescription,
+                          })
+                        );
+                      } else {
+                        console.error("socketRef.current is undefined");
+                      }
                     })
                     .catch((e) => console.log(e));
                 })
@@ -319,14 +332,18 @@ export default function VideoMeetComponent() {
         if (Array.isArray(clients)) {
           clients.forEach((socketListId) => {
             connections[socketListId] = new RTCPeerConnection(peerConfigConnections); // Create a new peer connection
-      
+
             connections[socketListId].onicecandidate = function (event) {
               if (event.candidate != null) {
-                socketRef.current.emit(
-                  "signal",
-                  socketListId,
-                  JSON.stringify({ ice: event.candidate }) // Send the ICE candidate to the remote peer
-                );
+                if (socketRef.current) {
+                  socketRef.current.emit(
+                    "signal",
+                    socketListId,
+                    JSON.stringify({ ice: event.candidate }) // Send the ICE candidate to the remote peer
+                  );
+                } else {
+                  console.error("socketRef.current is undefined");
+                }
               }
             };
       
@@ -384,18 +401,21 @@ export default function VideoMeetComponent() {
               connections[id2]
                 .setLocalDescription(description) // Set the local description
                 .then(() => {
-                  socketRef.current.emit(
-                    "signal",
-                    id2,
-                    JSON.stringify({ sdp: connections[id2].localDescription }) // Send the offer to the remote peer
-                  );
+                  if (socketRef.current) {
+                    socketRef.current.emit(
+                      "signal",
+                      id2,
+                      JSON.stringify({ sdp: connections[id2].localDescription }) // Send the offer to the remote peer
+                    );
+                  } else {
+                    console.error("socketRef.current is undefined");
+                  }
                 })
                 .catch((e) => console.log(e));
             });
           }
         }
       });
-      
     });
   };
 
@@ -428,7 +448,7 @@ export default function VideoMeetComponent() {
 
   useEffect(() => {
     if (screen !== undefined) {
-      getDislayMedia(); // Call to get display media
+      getDisplayMedia(); // Call to get display media
     }
   }, [screen]);
 
@@ -469,7 +489,11 @@ export default function VideoMeetComponent() {
   };
 
   let sendMessage = () => {
-    socketRef.current.emit("chat-message", message, username); // Send the message to the server
+    if (socketRef.current) {
+      socketRef.current.emit("chat-message", message, username); // Send the message to the server
+    } else {
+      console.error("socketRef.current is undefined");
+    }
     setMessage(""); // Clear the message input
   };
 
