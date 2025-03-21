@@ -13,7 +13,7 @@ import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
 import ChatIcon from '@mui/icons-material/Chat';
 import server from "../environment";
 
-const serverUrl = server.prod; // Server URL
+const server_Url = server.prod; // Server URL
 
 var connections = {}; // Object to hold Peer connections for each user
 
@@ -323,12 +323,12 @@ export default function VideoMeetComponent() {
   };
 
   let connectToSocketServer = () => {
-    socketRef.current = io.connect(serverUrl, { secure: false }); // Connect to the socket server
+    socketRef.current = io.connect(server_Url, { secure: false }) // Connect to the socket server
 
     socketRef.current.on("signal", gotMessageFromServer); // Listen for incoming signals
 
     socketRef.current.on("connect", () => {
-      socketRef.current.emit("join-call", window.location.href); // Join the call with the current URL
+      socketRef.current.emit("join-call", window.location.href) // Join the call with the current URL
       socketIdRef.current = socketRef.current.id; // Store the socket ID
 
       socketRef.current.on("chat-message", addMessage); // Listen for incoming chat messages
