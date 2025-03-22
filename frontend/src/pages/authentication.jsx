@@ -118,7 +118,9 @@ export default function Authentication() {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username" 
           />
+
           <TextField
             margin="normal"
             required
@@ -127,7 +129,9 @@ export default function Authentication() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
           />
+
           {error && (
             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {error}

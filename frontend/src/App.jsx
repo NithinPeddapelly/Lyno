@@ -1,12 +1,12 @@
 import "./App.css";
 import { createTheme } from "@mui/material/styles";
-import LandingPage from "./pages/landing";
-import Authentication from "./pages/authentication";
-import { AuthProvider } from "./contexts/AuthContext";
+import LandingPage from "./pages/landing.jsx";
+import Authentication from "./pages/authentication.jsx";
+import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import VideoMeetComponent from "./pages/VideoMeet.jsx";
-import HomeComponent from "./pages/home";
-import History from "./pages/history";
+import HomeComponent from "./pages/home.jsx";
+import History from "./pages/history.jsx";
 
 
 const theme = createTheme({
