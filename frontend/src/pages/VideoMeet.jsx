@@ -11,9 +11,10 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
 import ChatIcon from '@mui/icons-material/Chat';
+import socket from "../utils/socket";
 import server from "../environment";
 
-const server_Url = server.prod; // Server URL
+const server_Url = server; // Server URL
 
 var connections = {}; // Object to hold Peer connections for each user
 
@@ -117,7 +118,19 @@ export default function VideoMeetComponent() {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
+  
+    socket.on("message", (data) => {
+      console.log("New message:", data);
+    });
+  
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   useEffect(() => {
     if (video !== undefined && audio !== undefined) {
       getUserMedia(); // Call - get user media

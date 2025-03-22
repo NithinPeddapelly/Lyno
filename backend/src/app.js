@@ -31,7 +31,7 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: "40kb" })); // Parse incoming JSON requests with a limit of 40kb
+app.use(express.json({ limit: "100kb" })); // Parse incoming JSON requests with a limit of 40kb
 app.use(express.urlencoded({ limit: "40kb", extended: true })); // Parse URL-encoded data with the same size limit
 
 // Define routes
