@@ -6,6 +6,7 @@ import { connectToSocket } from "./controllers/socketManager.js";
 import cors from "cors";
 import userRoutes from "./routes/users.routes.js";
 
+// Create an Express application
 const app = express();
 
 // Create an HTTP server using Express
@@ -27,23 +28,20 @@ app.use("/api/v1/users", userRoutes); // User-related API routes
 
 // Function to start the server and connect to the database
 const start = async () => {
-    try {
-        // Set MongoDB user (not actually used in this code, ensure it's properly configured)
-        app.set("mongo_user");
-        
-        // Connect to MongoDB Atlas cluster
-        const connectionDb = await mongoose.connect("mongodb+srv://nithin_peddapellyLYNO:enteryourpasswordhere@cluster.qq0z7.mongodb.net/");
-        
-        console.log(`MONGO Connected. DB Host: ${connectionDb.connection.host}`);
-        
-        // Start the server and listen on the defined port
-        server.listen(app.get("port"), () => {
-            console.log(`LISTENING ON PORT ${app.get("port")}`);
-        });
-    } catch (error) {
-        console.error("Error starting the server:", error);
-        process.exit(1); // Exit process with failure if connection fails
-    }
+    // Set MongoDB user (not actually used in this code, ensure it's properly configured)
+    app.set("mongo_user");
+
+    // Connect to MongoDB Atlas cluster
+    const connectionDb = await mongoose.connect(
+        "mongodb+srv://nithin_peddapellyLYNO:enteryourpasswordhere@cluster.qq0z7.mongodb.net/"
+    );
+
+    console.log(`MONGO Connected DB Host: ${connectionDb.connection.host}`);
+
+    // Start the server and listen on the defined port
+    server.listen(app.get("port"), () => {
+        console.log("LISTENING ON PORT 8000");
+    });
 };
 
 // Call the start function to initiate the server and database connection

@@ -18,16 +18,19 @@ export const connectToSocket = (server) => {
 
   io.on("connection", (socket) => {
     // Handling new socket connections
-    console.log("SOMETHING CONNECTED");
+    console.log("Backend Connected", socket.id);
 
     // Handling users joining a call
     socket.on("join-call", (path) => {
+      // Store the socket ID for the call
       if (connections[path] === undefined) {
         connections[path] = [];
       }
-      connections[path].push(socket.id); // Store the socket ID for the call
-      timeOnline[socket.id] = new Date(); // Track when the user joined
+      connections[path].push(socket.id);
 
+      // Track when the user joined
+      timeOnline[socket.id] = new Date();
+      // Notify all users in the call that a new user has joined
       for (let a = 0; a < connections[path].length; a++) {
         io.to(connections[path][a]).emit(
           "user-joined",
@@ -49,8 +52,8 @@ export const connectToSocket = (server) => {
       }
     });
 
+    // Handling WebRTC signaling between users
     socket.on("signal", (toId, message) => {
-      // Handling WebRTC signaling between users
       io.to(toId).emit("signal", socket.id, message);
     });
 
@@ -59,14 +62,15 @@ export const connectToSocket = (server) => {
       const [matchingRoom, found] = Object.entries(connections).reduce(
         ([room, isFound], [roomKey, roomValue]) => {
           if (!isFound && roomValue.includes(socket.id)) {
-            return [roomKey, true]; // Properly updates the room when found
+            return [roomKey, true];
           }
           return [room, isFound]; // Keeps the previous room unchanged if not found
         },
         ["", false] // Initial values
       );
 
-      if (found) {
+      if (found === true) {
+        // Initial values
         if (messages[matchingRoom] === undefined) {
           messages[matchingRoom] = [];
         }
@@ -76,9 +80,9 @@ export const connectToSocket = (server) => {
           data: data,
           "socket-id-sender": socket.id,
         });
-
         console.log("message", matchingRoom, ":", sender, data);
 
+        // Broadcast the chat message to all users in the call
         connections[matchingRoom].forEach((elem) => {
           io.to(elem).emit("chat-message", data, sender, socket.id);
         });

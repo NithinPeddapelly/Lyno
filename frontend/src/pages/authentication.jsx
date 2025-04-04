@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AuthContext } from "../contexts/AuthContext";
 import Snackbar from "@mui/material/Snackbar";
+import Link from "@mui/material/Link"; 
 
 function Copyright(props) {
   return (
@@ -74,8 +75,7 @@ export default function Authentication() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
-
+          minHeight: "90vh",
           backgroundPosition: "center",
         }}
       >
@@ -118,7 +118,9 @@ export default function Authentication() {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
           />
+
           <TextField
             margin="normal"
             required
@@ -127,7 +129,9 @@ export default function Authentication() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
           />
+
           {error && (
             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {error}
@@ -144,6 +148,10 @@ export default function Authentication() {
             {formState === 0 ? "Login" : "Register"}
           </Button>
         </Box>
+      </Box>
+
+      <Box sx={{ mt: 8, mb: 4 }}>
+        <Copyright />
       </Box>
 
       <Snackbar

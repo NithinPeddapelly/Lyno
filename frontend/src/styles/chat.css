@@ -1,0 +1,146 @@
+
+.chatRoom {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: min(25vw, 350px);
+    max-height: 95vh;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 999; /* Ensures it stays above other elements */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+
+.chatRoom.hidden {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+
+.chatHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #007bff;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.chatHeader button {
+    background: none;
+    border: none;
+    color: rgb(255, 255, 255);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+
+.chatContainer {
+    flex: 21;
+    padding: 10px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #8f9dac #e0e0e0;
+}
+
+.chatMessage {
+    max-width: 80%;
+    word-wrap: break-word;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    margin-bottom: 5px;
+}
+
+
+.chatMessage.user {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+}
+
+
+.chatMessage.other {
+    align-self: flex-start;
+}
+
+
+.chattingArea {
+    display: flex;
+    background: #fdfffd;;
+    padding: 2px;
+    border-top: 1px solid #ffffff;
+}
+
+.chattingArea input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    outline: none;
+}
+
+.chattingArea button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+
+@media (max-width: 768px) {
+    .chatRoom {
+        width: 90vw;
+        right: 5%;
+        bottom: 10px;
+    }
+}
+
+.chattingArea button:hover {
+    background-color: #ffffff;
+}
+
+
+@media (max-width: 768px) {
+    .meetUser Video {
+        width: 80px;
+        height: 15vh;
+        bottom: 10px;
+        left: 5px;
+    }
+
+    .conferenceView {
+        flex-direction: column;
+    }
+
+    .conferenceView video {
+        width: 100px;
+        height: auto;
+    }
+
+    .chatRoom {
+        width: 10vw;
+        height: 300px;
+        right: 0;
+        bottom: 0;
+    }
+
+    .buttonContainers {
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    .chatMessage {
+        max-width: 50%;
+    }
+}
