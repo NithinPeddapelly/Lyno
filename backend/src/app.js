@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
@@ -8,16 +7,11 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import userRoutes from "./routes/users.routes.js";
+import { env } from "./config/env.js";
 
 const app = express();
 const server = createServer(app);
 const io = connectToSocket(server);
-
-const PORT = process.env.PORT || 8000;
-const MONGODB_URI = process.env.MONGODB_URI;
-const CORS_ORIGIN = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()) || [
-    "http://localhost:5173",
-];
 
 // Security headers
 app.use(helmet());
@@ -25,7 +19,7 @@ app.use(helmet());
 // CORS — only allow configured origins
 app.use(
     cors({
-        origin: CORS_ORIGIN,
+        origin: env.CORS_ORIGIN,
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })
@@ -64,17 +58,17 @@ app.use((err, _req, res, _next) => {
 });
 
 const start = async () => {
-    if (!MONGODB_URI) {
-        console.error("MONGODB_URI is not defined. Check your .env file.");
+    try {
+        const connectionDb = await mongoose.connect(env.MONGODB_URI);
+        console.log(`MongoDB connected: ${connectionDb.connection.host}`);
+
+        server.listen(env.PORT, () => {
+            console.log(`Server listening on port ${env.PORT}`);
+        });
+    } catch (error) {
+        console.error(error.message || "Failed to start server.");
         process.exit(1);
     }
-
-    const connectionDb = await mongoose.connect(MONGODB_URI);
-    console.log(`MongoDB connected: ${connectionDb.connection.host}`);
-
-    server.listen(PORT, () => {
-        console.log(`Server listening on port ${PORT}`);
-    });
 };
 
 // Graceful shutdown
