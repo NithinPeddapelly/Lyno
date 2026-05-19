@@ -1,48 +1,89 @@
+import "dotenv/config";
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 import { connectToSocket } from "./controllers/socketManager.js";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import userRoutes from "./routes/users.routes.js";
 
-// Create an Express application
 const app = express();
-
-// Create an HTTP server using Express
 const server = createServer(app);
-
-// Initialize Socket.io with the HTTP server
 const io = connectToSocket(server);
 
-// Set the port for the server, defaulting to 8000 if not specified in the environment variables
-app.set("port", process.env.PORT || 8000);
+const PORT = process.env.PORT || 8000;
+const MONGODB_URI = process.env.MONGODB_URI;
+const CORS_ORIGIN = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()) || [
+    "http://localhost:5173",
+];
 
-// Middleware setup
-app.use(cors()); // Enable CORS to allow cross-origin requests
-app.use(express.json({ limit: "40kb" })); // Parse incoming JSON requests with a limit of 40kb
-app.use(express.urlencoded({ limit: "40kb", extended: true })); // Parse URL-encoded data with the same size limit
+// Security headers
+app.use(helmet());
 
-// Define routes
-app.use("/api/v1/users", userRoutes); // User-related API routes
+// CORS — only allow configured origins
+app.use(
+    cors({
+        origin: CORS_ORIGIN,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    })
+);
 
-// Function to start the server and connect to the database
+app.use(express.json({ limit: "40kb" }));
+app.use(express.urlencoded({ limit: "40kb", extended: true }));
+
+// Rate limiting — 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many requests, please try again later." },
+});
+app.use(limiter);
+
+// Stricter limit for auth endpoints
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many auth attempts, please try again later." },
+});
+app.use("/api/v1/users/login", authLimiter);
+app.use("/api/v1/users/register", authLimiter);
+
+app.use("/api/v1/users", userRoutes);
+
+// Global error handler
+app.use((err, _req, res, _next) => {
+    const status = err.status || 500;
+    res.status(status).json({ message: err.message || "Internal server error" });
+});
+
 const start = async () => {
-    // Set MongoDB user (not actually used in this code, ensure it's properly configured)
-    app.set("mongo_user");
+    if (!MONGODB_URI) {
+        console.error("MONGODB_URI is not defined. Check your .env file.");
+        process.exit(1);
+    }
 
-    // Connect to MongoDB Atlas cluster
-    const connectionDb = await mongoose.connect(
-        "mongodb+srv://nithin_peddapellyLYNO:enteryourpasswordhere@cluster.qq0z7.mongodb.net/"
-    );
+    const connectionDb = await mongoose.connect(MONGODB_URI);
+    console.log(`MongoDB connected: ${connectionDb.connection.host}`);
 
-    console.log(`MONGO Connected DB Host: ${connectionDb.connection.host}`);
-
-    // Start the server and listen on the defined port
-    server.listen(app.get("port"), () => {
-        console.log("LISTENING ON PORT 8000");
+    server.listen(PORT, () => {
+        console.log(`Server listening on port ${PORT}`);
     });
 };
 
-// Call the start function to initiate the server and database connection
+// Graceful shutdown
+const shutdown = async (signal) => {
+    console.log(`${signal} received — shutting down`);
+    await mongoose.connection.close();
+    server.close(() => process.exit(0));
+};
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
+
 start();

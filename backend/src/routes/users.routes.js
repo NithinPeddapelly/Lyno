@@ -1,11 +1,13 @@
-import { Router } from "express"; // Importing Router from Express to define API routes
-import { addToHistory, login, register,getUserHistory } from "../controllers/user.controller.js";  // Importing login and register functions from the users controller
-const router = Router(); // Creating an instance of the Express router
+import { Router } from "express";
+import { addToHistory, login, register, getUserHistory } from "../controllers/user.controller.js";
+import { verifyToken } from "../middleware/auth.middleware.js";
+import { validateLogin, validateRegister } from "../middleware/validate.middleware.js";
 
-// Defining API endpoints
-router.route("/login").post(login); // Route for user login
-router.route("/register").post(register); // Route for user registration
-router.route("/add_to_activity").post(addToHistory) // Route to add an activity
-router.route("/get_all_activity").get(getUserHistory) // Route to fetch all activities of a user
+const router = Router();
 
-export default router; // Exporting the router to be used in other parts of the application
+router.post("/login", validateLogin, login);
+router.post("/register", validateRegister, register);
+router.post("/add_to_activity", verifyToken, addToHistory);
+router.get("/get_all_activity", verifyToken, getUserHistory);
+
+export default router;
