@@ -7,9 +7,18 @@ let timeOnline = {}; // Stores the time a user joined the call
 
 // Function to initialize and configure Socket.IO server
 export const connectToSocket = (server) => {
+  const socketAllowedOrigins = env.CORS_ORIGIN.map((origin) => {
+    if (origin === "*") return "*";
+    try {
+      return new URL(origin).origin;
+    } catch {
+      return origin.replace(/\/+$/, "");
+    }
+  });
+
   const io = new Server(server, {
     cors: {
-      origin: env.CORS_ORIGIN.includes("*") ? true : env.CORS_ORIGIN,
+      origin: socketAllowedOrigins.includes("*") ? true : socketAllowedOrigins,
       methods: ["GET", "POST"],
       allowedHeaders: ["*"],
       credentials: false,

@@ -26,7 +26,9 @@ const PORT = Number(read("PORT", { defaultValue: "8000" }));
 const MONGODB_URI = read("MONGODB_URI", { required: true });
 const JWT_SECRET = read("JWT_SECRET", { required: true });
 const JWT_EXPIRES_IN = read("JWT_EXPIRES_IN", { defaultValue: "7d" });
-const CORS_ORIGIN = read("CORS_ORIGIN", { defaultValue: "http://localhost:5173" })
+const CORS_ORIGIN = read("CORS_ORIGIN", {
+    defaultValue: "http://localhost:5173,https://lyno-frontend.onrender.com",
+})
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);

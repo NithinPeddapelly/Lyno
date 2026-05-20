@@ -32,27 +32,29 @@ const normalizedAllowedOrigins = env.CORS_ORIGIN
 app.use(helmet());
 
 // CORS — only allow configured origins
-app.use(
-    cors({
-        origin(origin, callback) {
-            if (!origin) return callback(null, true);
-            const requestOrigin = (() => {
-                try {
-                    return new URL(origin).origin;
-                } catch {
-                    return origin.replace(/\/+$/, "");
-                }
-            })();
-
-            if (normalizedAllowedOrigins.includes("*") || normalizedAllowedOrigins.includes(requestOrigin)) {
-                return callback(null, true);
+const corsOptions = {
+    origin(origin, callback) {
+        if (!origin) return callback(null, true);
+        const requestOrigin = (() => {
+            try {
+                return new URL(origin).origin;
+            } catch {
+                return origin.replace(/\/+$/, "");
             }
-            return callback(new Error(`CORS blocked for origin: ${origin}`));
-        },
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    })
-);
+        })();
+
+        if (normalizedAllowedOrigins.includes("*") || normalizedAllowedOrigins.includes(requestOrigin)) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json({ limit: "40kb" }));
 app.use(express.urlencoded({ limit: "40kb", extended: true }));
