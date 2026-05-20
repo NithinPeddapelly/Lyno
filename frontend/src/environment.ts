@@ -1,5 +1,15 @@
-// VITE_SERVER_URL is set in .env / .env.local
-const server: string =
-  import.meta.env.VITE_SERVER_URL ?? "http://localhost:8000";
+// VITE_SERVER_URL should be set in deployment environments.
+const configuredServer = (import.meta.env.VITE_SERVER_URL as string | undefined)?.trim();
+
+const server: string = configuredServer
+  ? configuredServer.replace(/\/+$/, "")
+  : import.meta.env.DEV
+  ? "http://localhost:8000"
+  : "";
+
+if (!server) {
+  // Avoid silently calling localhost in production builds.
+  console.error("Missing VITE_SERVER_URL. Set it in your deployment environment.");
+}
 
 export default server;
