@@ -494,10 +494,10 @@ export default function VideoMeetComponent() {
         .vm-conference {
           width: 100%;
           height: calc(100vh - 80px);
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-content: center;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+          grid-auto-rows: 1fr;
+          align-content: start;
           gap: 12px;
           padding: 16px;
         }
@@ -506,11 +506,13 @@ export default function VideoMeetComponent() {
           border-radius: 12px;
           overflow: hidden;
           border: 1px solid rgba(255,255,255,0.06);
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          min-height: 180px;
         }
         .vm-remote-video {
-          width: 30vw;
-          height: 35vh;
-          min-width: 200px;
+          width: 100%;
+          height: 100%;
           object-fit: cover;
           display: block;
         }
@@ -568,7 +570,9 @@ export default function VideoMeetComponent() {
         .vm-controls .MuiIconButton-root:hover { transform: scale(1.1); }
 
         @media (max-width: 640px) {
-          .vm-remote-video { width: 85vw; height: 30vh; }
+          .vm-conference {
+            grid-template-columns: 1fr;
+          }
           .vm-local-pip { width: 100px; height: 70px; bottom: 90px; }
         }
       `}</style>
