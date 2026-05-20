@@ -167,7 +167,17 @@ export default function VideoMeetComponent() {
   }, [getUserMediaSuccess]);
 
   const connectToSocketServer = useCallback(() => {
-    const socket = io(server, { secure: true }) as Socket;
+    if (!server) {
+      showNotification("Backend URL is missing. Set VITE_SERVER_URL and redeploy.");
+      return;
+    }
+
+    const socket = io(server, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+      reconnectionAttempts: 5,
+      timeout: 10000,
+    }) as Socket;
     socketRef.current = socket;
 
     socket.on("signal", gotMessageFromServer);
@@ -220,7 +230,7 @@ export default function VideoMeetComponent() {
         }
       });
     });
-  }, [gotMessageFromServer, addMessage]);
+  }, [gotMessageFromServer, addMessage, showNotification]);
 
   const handleGetMedia = () => {
     setAskForUsername(false);
