@@ -15,6 +15,7 @@ export const validateRegister = [
         .isLength({ min: 2, max: 50 }).withMessage("Name must be 2–50 characters."),
     body("username")
         .trim()
+        .toLowerCase()
         .notEmpty().withMessage("Username is required.")
         .isLength({ min: 3, max: 30 }).withMessage("Username must be 3–30 characters.")
         .matches(/^[a-zA-Z0-9_]+$/).withMessage("Username may only contain letters, numbers, and underscores."),
@@ -24,7 +25,7 @@ export const validateRegister = [
 ];
 
 export const validateLogin = [
-    body("username").trim().notEmpty().withMessage("Username is required."),
+    body("username").trim().toLowerCase().notEmpty().withMessage("Username is required."),
     body("password").notEmpty().withMessage("Password is required."),
     handleValidationErrors,
 ];

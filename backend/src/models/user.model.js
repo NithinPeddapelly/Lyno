@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const userScheme = new Schema({
-  name: { type: String, required: true },
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  name: { type: String, required: true, trim: true },
+  username: { type: String, required: true, unique: true, trim: true, lowercase: true },
+  password: { type: String, required: true, minlength: 6 },
   // Token field removed — authentication is now stateless via JWT
-});
+}, { timestamps: true });
 
 const User = mongoose.model("User", userScheme);
 

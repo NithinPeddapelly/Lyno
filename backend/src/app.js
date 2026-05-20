@@ -13,6 +13,21 @@ const app = express();
 const server = createServer(app);
 const io = connectToSocket(server);
 
+// Needed behind Render/proxies so rate-limit and IP logic are reliable.
+app.set("trust proxy", 1);
+
+const normalizedAllowedOrigins = env.CORS_ORIGIN
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .map((origin) => {
+        if (origin === "*") return "*";
+        try {
+            return new URL(origin).origin;
+        } catch {
+            return origin.replace(/\/+$/, "");
+        }
+    });
+
 // Security headers
 app.use(helmet());
 
@@ -21,7 +36,15 @@ app.use(
     cors({
         origin(origin, callback) {
             if (!origin) return callback(null, true);
-            if (env.CORS_ORIGIN.includes("*") || env.CORS_ORIGIN.includes(origin)) {
+            const requestOrigin = (() => {
+                try {
+                    return new URL(origin).origin;
+                } catch {
+                    return origin.replace(/\/+$/, "");
+                }
+            })();
+
+            if (normalizedAllowedOrigins.includes("*") || normalizedAllowedOrigins.includes(requestOrigin)) {
                 return callback(null, true);
             }
             return callback(new Error(`CORS blocked for origin: ${origin}`));

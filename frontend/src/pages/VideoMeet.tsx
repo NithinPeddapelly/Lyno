@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, CSSProperties } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import io, { Socket } from "socket.io-client";
 import { Badge, IconButton, TextField, Button } from "@mui/material";
@@ -60,6 +60,9 @@ export default function VideoMeetComponent() {
   const [username, setUsername] = useState("");
   const [notification, setNotification] = useState("");
   const [videos, setVideos] = useState<VideoStream[]>([]);
+
+  const remoteCount = videos.length;
+  const remoteColumns = Math.max(1, Math.min(4, remoteCount || 1));
 
   const showNotification = useCallback((msg: string) => {
     setNotification(msg);
@@ -385,7 +388,7 @@ export default function VideoMeetComponent() {
       ) : (
         <div className="vm-meet">
           {/* Remote videos */}
-          <div className="vm-conference">
+          <div className="vm-conference" style={{ "--vm-cols": String(remoteColumns) } as CSSProperties}>
             {videos.map((v) => (
               <div key={v.socketId} className="vm-remote-wrap">
                 <video
@@ -532,7 +535,7 @@ export default function VideoMeetComponent() {
           width: 100%;
           height: calc(100vh - 80px);
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+          grid-template-columns: repeat(var(--vm-cols), minmax(0, 1fr));
           grid-auto-rows: 1fr;
           align-content: start;
           gap: 12px;

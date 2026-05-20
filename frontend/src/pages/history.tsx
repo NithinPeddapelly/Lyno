@@ -2,11 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Meeting } from "../types";
+import withAuth from "../utils/withAuth";
 
-export default function History() {
+function History() {
   const { getHistoryOfUser, addToUserHistory } = useContext(AuthContext);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export default function History() {
         const history = await getHistoryOfUser();
         setMeetings(history);
       } catch {
-        // user may be logged out; withAuth handles redirect
+        setLoadError("Unable to load history. Please sign in again.");
       } finally {
         setLoading(false);
       }
@@ -53,6 +55,11 @@ export default function History() {
 
         {loading ? (
           <div className="history-empty">Loading…</div>
+        ) : loadError ? (
+          <div className="history-empty">
+            <p>{loadError}</p>
+            <button className="btn-go-home" onClick={() => navigate("/auth")}>Go to Sign In</button>
+          </div>
         ) : meetings.length === 0 ? (
           <div className="history-empty">
             <div className="empty-icon">📋</div>
@@ -113,7 +120,7 @@ export default function History() {
           border-radius: 50%;
         }
         .history-main {
-          max-width: 680px;
+          max-width: 860px;
           margin: 0 auto;
           padding: 3rem 2rem;
         }
@@ -129,9 +136,10 @@ export default function History() {
         }
         .history-list { display: flex; flex-direction: column; gap: 0.75rem; }
         .history-card {
-          display: flex;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
           align-items: center;
-          justify-content: space-between;
+          gap: 0.75rem;
           background: var(--bg-card);
           border: 1px solid var(--border-glass);
           border-radius: var(--radius);
@@ -143,7 +151,12 @@ export default function History() {
           box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .hcard-info { display: flex; flex-direction: column; gap: 0.2rem; }
-        .hcard-code { font-size: 0.95rem; font-weight: 600; color: white; }
+        .hcard-code {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: white;
+          overflow-wrap: anywhere;
+        }
         .hcard-date { font-size: 0.8rem; color: var(--text-muted); }
         .hcard-rejoin {
           background: rgba(108,99,255,0.15);
@@ -176,7 +189,24 @@ export default function History() {
           transition: background 0.2s;
         }
         .btn-go-home:hover { background: var(--brand-dark); }
+
+        @media (max-width: 640px) {
+          .history-nav {
+            padding: 1rem;
+          }
+          .history-main {
+            padding: 2rem 1rem;
+          }
+          .history-card {
+            grid-template-columns: 1fr;
+          }
+          .hcard-rejoin {
+            width: 100%;
+          }
+        }
       `}</style>
     </div>
   );
 }
+
+export default withAuth(History);

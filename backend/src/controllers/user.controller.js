@@ -9,7 +9,8 @@ const JWT_SECRET = env.JWT_SECRET;
 const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN;
 
 const login = async (req, res) => {
-    const { username, password } = req.body;
+    const username = String(req.body.username || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
 
     try {
         const user = await User.findOne({ username });
@@ -35,7 +36,9 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-    const { name, username, password } = req.body;
+    const name = String(req.body.name || "").trim();
+    const username = String(req.body.username || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
 
     try {
         const existingUser = await User.findOne({ username });
