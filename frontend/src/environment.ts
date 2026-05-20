@@ -1,10 +1,14 @@
 // VITE_SERVER_URL should be set in deployment environments.
 const configuredServer = (import.meta.env.VITE_SERVER_URL as string | undefined)?.trim();
 
+const devServer = typeof window !== "undefined"
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : "http://localhost:8000";
+
 const server: string = configuredServer
   ? configuredServer.replace(/\/+$/, "")
   : import.meta.env.DEV
-  ? "http://localhost:8000"
+  ? devServer
   : "";
 
 if (!server) {

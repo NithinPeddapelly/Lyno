@@ -19,7 +19,13 @@ app.use(helmet());
 // CORS — only allow configured origins
 app.use(
     cors({
-        origin: env.CORS_ORIGIN,
+        origin(origin, callback) {
+            if (!origin) return callback(null, true);
+            if (env.CORS_ORIGIN.includes("*") || env.CORS_ORIGIN.includes(origin)) {
+                return callback(null, true);
+            }
+            return callback(new Error(`CORS blocked for origin: ${origin}`));
+        },
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })

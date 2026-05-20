@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { env } from "../config/env.js";
 
 let connections = {}; // Stores active connections for each call
 let messages = {}; // Stores chat messages for each call
@@ -8,11 +9,10 @@ let timeOnline = {}; // Stores the time a user joined the call
 export const connectToSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      // Allowing cross-origin requests for testing; will be removed in production
-      origin: "*",
+      origin: env.CORS_ORIGIN.includes("*") ? true : env.CORS_ORIGIN,
       methods: ["GET", "POST"],
       allowedHeaders: ["*"],
-      credentials: true,
+      credentials: false,
     },
   });
 
