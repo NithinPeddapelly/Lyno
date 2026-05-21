@@ -16,7 +16,9 @@ const io = connectToSocket(server);
 // Needed behind Render/proxies so rate-limit and IP logic are reliable.
 app.set("trust proxy", 1);
 
-const normalizedAllowedOrigins = env.CORS_ORIGIN
+const mandatoryOrigins = ["https://lyno-frontend.onrender.com", "http://localhost:5173"];
+
+const normalizedAllowedOrigins = [...new Set([...env.CORS_ORIGIN, ...mandatoryOrigins])]
     .map((origin) => origin.trim())
     .filter(Boolean)
     .map((origin) => {
@@ -54,6 +56,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json({ limit: "40kb" }));
 app.use(express.urlencoded({ limit: "40kb", extended: true }));
@@ -80,6 +83,10 @@ app.use("/api/v1/users/login", authLimiter);
 app.use("/api/v1/users/register", authLimiter);
 
 app.use("/api/v1/users", userRoutes);
+
+app.use("/api", (_req, res) => {
+    res.status(404).json({ message: "API route not found." });
+});
 
 // Global error handler
 app.use((err, _req, res, _next) => {

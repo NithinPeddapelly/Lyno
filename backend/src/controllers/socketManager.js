@@ -7,7 +7,9 @@ let timeOnline = {}; // Stores the time a user joined the call
 
 // Function to initialize and configure Socket.IO server
 export const connectToSocket = (server) => {
-  const socketAllowedOrigins = env.CORS_ORIGIN.map((origin) => {
+  const mandatoryOrigins = ["https://lyno-frontend.onrender.com", "http://localhost:5173"];
+
+  const socketAllowedOrigins = [...new Set([...env.CORS_ORIGIN, ...mandatoryOrigins])].map((origin) => {
     if (origin === "*") return "*";
     try {
       return new URL(origin).origin;
