@@ -69,7 +69,6 @@ const Chat = ({ messages, sendMessage, setNewMessages, username }: ChatProps) =>
           border-radius: var(--radius-lg);
           display: flex;
           flex-direction: column;
-          backdrop-filter: blur(16px);
           box-shadow: var(--shadow-card);
           z-index: 50;
           overflow: hidden;

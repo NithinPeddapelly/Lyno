@@ -473,7 +473,6 @@ export default function VideoMeetComponent() {
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
-          backdrop-filter: blur(20px);
         }
         .vm-lobby-logo {
           display: flex;
@@ -587,7 +586,6 @@ export default function VideoMeetComponent() {
           border-radius: 100px;
           font-size: 0.875rem;
           border: 1px solid rgba(255,255,255,0.1);
-          backdrop-filter: blur(10px);
           z-index: 100;
           pointer-events: none;
         }
@@ -603,7 +601,6 @@ export default function VideoMeetComponent() {
           padding: 10px 20px;
           border-radius: 50px;
           border: 1px solid rgba(255,255,255,0.08);
-          backdrop-filter: blur(12px);
           z-index: 20;
         }
         .vm-controls .MuiIconButton-root { transition: transform 0.2s; }

@@ -156,7 +156,6 @@ export default function Authentication() {
           border: 1px solid var(--border-glass);
           border-radius: var(--radius-lg);
           padding: 2.5rem 2rem;
-          backdrop-filter: blur(20px);
           box-shadow: var(--shadow-card);
         }
         .auth-back {
@@ -284,8 +283,8 @@ export default function Authentication() {
         .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .auth-footer-text {
           text-align: center;
-          color: var(--text-muted);
-          font-size: 0.8rem;
+          color: rgba(255,255,255,0.78);
+          font-size: 1rem;
           margin-top: 1.5rem;
         }
       `}</style>

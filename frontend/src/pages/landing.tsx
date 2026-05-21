@@ -74,7 +74,7 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO */}
-      <section className="hero-section">
+      <section id="hero" className="hero-section">
         <div className="hero-badge">✨ Real-time video, reimagined</div>
         <h1 className="hero-title">
           Connect <span className="gradient-text">Instantly.</span>
@@ -115,7 +115,7 @@ export default function LandingPage() {
       </section>
 
       {/* FEATURES */}
-      <section className="features-section">
+      <section id="features" className="features-section">
         <h2 className="section-title">Everything you need to meet</h2>
         <p className="section-subtitle">
           Powerful features, zero complexity.
@@ -132,7 +132,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA BANNER */}
-      <section className="cta-banner">
+      <section id="get-started" className="cta-banner">
         <h2>Ready to Lyno?</h2>
         <p>Create your free account and start your first meeting in seconds.</p>
         <Link to="/auth" className="btn-primary-lg">
@@ -143,9 +143,16 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="landing-footer">
         <span>© {new Date().getFullYear()} Lyno</span>
-        <a href="https://www.linkedin.com/in/nithinpeddapelly" target="_blank" rel="noreferrer">
+        <a
+          href="https://www.linkedin.com/in/nithinpeddapelly"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="LinkedIn, opens in a new tab"
+          title="Opens in a new tab"
+        >
           LinkedIn
         </a>
+        <a href="/site-map">Site map</a>
         <a href="mailto:nithinpeddapelly@gmail.com">Contact</a>
       </footer>
 
@@ -166,8 +173,7 @@ export default function LandingPage() {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: rgba(10,10,15,0.8);
-          backdrop-filter: blur(12px);
+          background: rgba(10,10,15,0.96);
           border-bottom: 1px solid var(--border-glass);
         }
         .landing-logo {
@@ -368,7 +374,7 @@ export default function LandingPage() {
         }
         .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
         .feature-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .feature-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+        .feature-desc { font-size: 1rem; color: var(--text-secondary); line-height: 1.6; }
 
         /* CTA BANNER */
         .cta-banner {
@@ -394,12 +400,12 @@ export default function LandingPage() {
           align-items: center;
           gap: 2rem;
           padding: 2rem;
-          color: var(--text-muted);
-          font-size: 0.875rem;
+          color: rgba(255,255,255,0.78);
+          font-size: 1rem;
           border-top: 1px solid var(--border-glass);
           margin-top: 4rem;
         }
-        .landing-footer a { color: var(--text-secondary); transition: color 0.2s; }
+        .landing-footer a { color: rgba(255,255,255,0.88); transition: color 0.2s; }
         .landing-footer a:hover { color: white; }
 
         @media (max-width: 640px) {
@@ -410,11 +416,11 @@ export default function LandingPage() {
             position: absolute;
             top: 68px;
             left: 0; right: 0;
-            background: rgba(10,10,15,0.95);
+            background: rgba(10,10,15,0.98);
             border-bottom: 1px solid var(--border-glass);
             padding: 1rem 2rem;
-            backdrop-filter: blur(12px);
           }
+          .feature-desc { font-size: 1rem; }
           .hamburger { display: flex; }
           .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
         }

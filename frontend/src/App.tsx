@@ -1,10 +1,11 @@
-import { Route, HashRouter as Router, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/landing';
 import Authentication from './pages/authentication';
 import { AuthProvider } from './contexts/AuthContext';
 import VideoMeetComponent from './pages/VideoMeet';
 import HomeComponent from './pages/home';
 import History from './pages/history';
+import SiteMap from './pages/site-map';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path='/' element={<LandingPage />} />
           <Route path='/auth' element={<Authentication />} />
+          <Route path='/site-map' element={<SiteMap />} />
           <Route path='/home' element={<HomeComponent />} />
           <Route path='/history' element={<History />} />
           <Route path='/:url' element={<VideoMeetComponent />} />

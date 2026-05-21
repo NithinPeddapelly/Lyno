@@ -25,7 +25,7 @@ function HomeComponent() {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/#/${newCode}`);
+    navigator.clipboard.writeText(`${window.location.origin}/${newCode}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -70,7 +70,7 @@ function HomeComponent() {
             <p>Start an instant meeting and share the link with others.</p>
             <div className="invite-link-box">
               <span className="invite-link-text">
-                {window.location.origin}/#/{newCode}
+                {window.location.origin}/{newCode}
               </span>
               <button className="invite-copy-btn" onClick={handleCopy}>
                 {copied ? "✓ Copied" : "Copy"}
@@ -116,8 +116,7 @@ function HomeComponent() {
           justify-content: space-between;
           padding: 1.25rem 2rem;
           border-bottom: 1px solid var(--border-glass);
-          background: rgba(10,10,15,0.8);
-          backdrop-filter: blur(12px);
+          background: rgba(10,10,15,0.96);
           position: sticky;
           top: 0;
           z-index: 50;
